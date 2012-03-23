@@ -51,6 +51,22 @@ void MainWindow::ExecuteTool03()
 			t.setLayerHeight(i, j, 0, gauss);
 		}
 	}
+	for(int j = 3; j<size/2; j++)
+	{
+		for(int i = 3; i<size/2; i++)
+		{
+			t.setLayerHeight(i,j,LAYERTYPE_SAND,1-(i+j)/64);
+		}
+	}
+
+	for(int j = 3*size/8; j<(size/2)+3; j++)
+	{
+		for(int i = 3*size/8; i<(size/2)+3; i++)
+		{
+			t.setLayerHeight(i,j,LAYERTYPE_WATER,1-(i+j)/64);
+		}
+	}
+
 
 	MayaGeometry mg_terrain = t.toMG();
 
