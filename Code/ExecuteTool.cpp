@@ -4,7 +4,7 @@
 /*! 
 \brief TODO 
 */
-void MainWindow::ExecuteTool01()
+void MainWindow::ExecuteToolVoid0()
 {
   MaterialObject mo={ ShaderNormal, None, AColor(0.3,0.3,0.3,1.0), AColor(0.5,0.4,0.2,1.0), AColor(0.1,0.1,0.1,1.0), 50.,QString("")};
 
@@ -20,7 +20,7 @@ void MainWindow::ExecuteTool01()
 /*! 
 \brief TODO 
 */
-void MainWindow::ExecuteTool02(){
+void MainWindow::ExecuteToolVoid1(){
   MayaGeometryStack mgs;
   mgs.Push();
   mgs.CreateBox(Vector(-2),Vector(2));
@@ -36,46 +36,79 @@ void MainWindow::ExecuteTool02(){
   mayaglWidget->clearWorld();
   mayaglWidget->setWorld(mga);
 }
-void MainWindow::ExecuteTool03()
+
+void MainWindow::GenTerrain()
 {
 	int size = 32;
-	Terrain t = Terrain(size);
-	for(int j = 0; j<size; j++)
+
+	if(terrain == NULL)
 	{
-		for(int i = 0; i<size; i++)
+		terrain = new Terrain(size);
+
+		for(int j = 0; j<size; j++)
 		{
-			float a = 0.01;
-			float b = 0;
-			float c = 0.01;
-			float gauss = 10*exp(-(a*pow((float)(i-(size/2)),2) + 2*b*(i-(size/2))*(j-(size/2))+ c*pow((float)(j-(size/2)),2)));
-			t.setLayerHeight(i, j, 0, gauss);
+			for(int i = 0; i<size; i++)
+			{
+				float a = 0.01;
+				float b = 0;
+				float c = 0.01;
+				float gauss = 10*exp(-(a*pow((float)(i-(size/2)),2) + 2*b*(i-(size/2))*(j-(size/2))+ c*pow((float)(j-(size/2)),2)));
+				terrain->setLayerHeight(i, j, 0, gauss);
+			}
+		}
+		for(int j = 3; j<size/2; j++)
+		{
+			for(int i = 3; i<size/2; i++)
+			{
+				terrain->setLayerHeight(i,j,LAYERTYPE_SAND,1-(i+j)/64);
+			}
+		}
+		for(int j = 3*size/8; j<(size/2)+3; j++)
+		{
+			for(int i = 3*size/8; i<(size/2)+3; i++)
+			{
+				terrain->setLayerHeight(i,j,LAYERTYPE_WATER,1-(i+j)/64);
+			}
 		}
 	}
-	for(int j = 3; j<size/2; j++)
-	{
-		for(int i = 3; i<size/2; i++)
-		{
-			t.setLayerHeight(i,j,LAYERTYPE_SAND,1-(i+j)/64);
-		}
-	}
 
-	for(int j = 3*size/8; j<(size/2)+3; j++)
-	{
-		for(int i = 3*size/8; i<(size/2)+3; i++)
-		{
-			t.setLayerHeight(i,j,LAYERTYPE_WATER,1-(i+j)/64);
-		}
-	}
-
-
-	MayaGeometry mg_terrain = t.toMG();
-
-	mayaglWidget->clearWorld();
-	MayaGeometryAll mga = MayaGeometrySet(mg_terrain,MayaFrame::Id);
-	mayaglWidget->setWorld(mga);
 }
 
-void MainWindow::ExecuteTool04(){}
+void MainWindow::RenderTerrain()
+{
+	if(terrain != NULL)
+	{
+		MayaGeometry mg_terrain = terrain->toMG();
+		//mg_terrain.setMaterialObject(mo);
+
+		mayaglWidget->clearWorld();
+		MayaGeometryAll mga = MayaGeometrySet(mg_terrain,MayaFrame::Id);
+		mayaglWidget->setWorld(mga);
+	}
+}
+
+void MainWindow::ExecuteToolTerGen()
+{
+	GenTerrain();
+	RenderTerrain();
+}
+
+void MainWindow::ExecuteToolTerRender()
+{
+	RenderTerrain();
+}
+
+void MainWindow::ExecuteToolTerWater()
+{
+	if(terrain != NULL)
+	{
+		terrain->fhsIteration();
+	}
+}
+
+
+/*
+void MainWindow::ExecuteTool03(){}
 void MainWindow::ExecuteTool05(){}
 void MainWindow::ExecuteTool06(){}
 void MainWindow::ExecuteTool07(){}
@@ -107,3 +140,4 @@ void MainWindow::ExecuteTool32(){}
 void MainWindow::ExecuteTool33(){}
 void MainWindow::ExecuteTool34(){}
 void MainWindow::ExecuteTool35(){}
+*/

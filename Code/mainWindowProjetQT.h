@@ -34,6 +34,15 @@ public:
     QWidget *centralwidget;
     QHBoxLayout *hboxLayout;
     QGroupBox *Objects_groupBox;
+
+    QPushButton *Objects_pushButton_void0;
+    QPushButton *Objects_pushButton_void1;
+
+    QPushButton *Objects_pushButton_terGen;
+    QPushButton *Objects_pushButton_terRender;
+    QPushButton *Objects_pushButton_terWater;
+
+	/*
     QPushButton *Objects_o05_pushButton;
     QPushButton *Objects_o01_pushButton;
     QPushButton *Objects_o03_pushButton;
@@ -69,6 +78,8 @@ public:
     QPushButton *Objects_o33_pushButton;
     QPushButton *Objects_o34_pushButton;
     QPushButton *Objects_o32_pushButton;
+	*/
+
     QFrame *line_2;
     QWidget *widget_GL;
     QFrame *line;
@@ -107,26 +118,41 @@ public:
     sizePolicy.setHeightForWidth(Objects_groupBox->sizePolicy().hasHeightForWidth());
     Objects_groupBox->setSizePolicy(sizePolicy);
     Objects_groupBox->setMinimumSize(QSize(153, 230));
+
+    Objects_pushButton_void0 = new QPushButton(Objects_groupBox);
+    Objects_pushButton_void0->setObjectName(QString::fromUtf8("Objects_pushButton_void0"));
+    Objects_pushButton_void0->setGeometry(QRect(0, 20, 70, 23));
+    Objects_pushButton_void0->setCheckable(true);
+
+    Objects_pushButton_void1 = new QPushButton(Objects_groupBox);
+    Objects_pushButton_void1->setObjectName(QString::fromUtf8("Objects_pushButton_void1"));
+    Objects_pushButton_void1->setGeometry(QRect(70, 20, 70, 23));
+    Objects_pushButton_void1->setCheckable(true);
+
+    Objects_pushButton_terGen = new QPushButton(Objects_groupBox);
+    Objects_pushButton_terGen->setObjectName(QString::fromUtf8("Objects_pushButton_terGen"));
+    Objects_pushButton_terGen->setGeometry(QRect(0, 43, 140, 23));
+    Objects_pushButton_terGen->setCheckable(true);
+
+    Objects_pushButton_terRender = new QPushButton(Objects_groupBox);
+    Objects_pushButton_terRender->setObjectName(QString::fromUtf8("Objects_pushButton_terRender"));
+    Objects_pushButton_terRender->setGeometry(QRect(0, 66, 140, 23));
+    Objects_pushButton_terRender->setCheckable(true);
+
+    Objects_pushButton_terWater = new QPushButton(Objects_groupBox);
+    Objects_pushButton_terWater->setObjectName(QString::fromUtf8("Objects_pushButton_terWater"));
+    Objects_pushButton_terWater->setGeometry(QRect(0, 89, 140, 23));
+    Objects_pushButton_terWater->setCheckable(true);
+
+	/*
     Objects_o05_pushButton = new QPushButton(Objects_groupBox);
     Objects_o05_pushButton->setObjectName(QString::fromUtf8("Objects_o05_pushButton"));
     Objects_o05_pushButton->setGeometry(QRect(120, 20, 31, 23));
     Objects_o05_pushButton->setCheckable(true);
-    Objects_o01_pushButton = new QPushButton(Objects_groupBox);
-    Objects_o01_pushButton->setObjectName(QString::fromUtf8("Objects_o01_pushButton"));
-    Objects_o01_pushButton->setGeometry(QRect(0, 20, 31, 23));
-    Objects_o01_pushButton->setCheckable(true);
     Objects_o03_pushButton = new QPushButton(Objects_groupBox);
     Objects_o03_pushButton->setObjectName(QString::fromUtf8("Objects_o03_pushButton"));
     Objects_o03_pushButton->setGeometry(QRect(60, 20, 31, 23));
     Objects_o03_pushButton->setCheckable(true);
-    Objects_o04_pushButton = new QPushButton(Objects_groupBox);
-    Objects_o04_pushButton->setObjectName(QString::fromUtf8("Objects_o04_pushButton"));
-    Objects_o04_pushButton->setGeometry(QRect(90, 20, 31, 23));
-    Objects_o04_pushButton->setCheckable(true);
-    Objects_o02_pushButton = new QPushButton(Objects_groupBox);
-    Objects_o02_pushButton->setObjectName(QString::fromUtf8("Objects_o02_pushButton"));
-    Objects_o02_pushButton->setGeometry(QRect(30, 20, 31, 23));
-    Objects_o02_pushButton->setCheckable(true);
     Objects_o06_pushButton = new QPushButton(Objects_groupBox);
     Objects_o06_pushButton->setObjectName(QString::fromUtf8("Objects_o06_pushButton"));
     Objects_o06_pushButton->setGeometry(QRect(0, 50, 31, 23));
@@ -247,7 +273,7 @@ public:
     Objects_o32_pushButton->setObjectName(QString::fromUtf8("Objects_o32_pushButton"));
     Objects_o32_pushButton->setGeometry(QRect(30, 200, 31, 23));
     Objects_o32_pushButton->setCheckable(true);
-
+*/
     hboxLayout->addWidget(Objects_groupBox);
 
     line_2 = new QFrame(centralwidget);
@@ -313,11 +339,15 @@ public:
     actionExport_ma->setText(QApplication::translate("Assets", "Maya File (.ma)", 0, QApplication::UnicodeUTF8));
     actionLoad_ma->setText(QApplication::translate("Assets", "Load", 0, QApplication::UnicodeUTF8));
     Objects_groupBox->setTitle(QApplication::translate("Assets", "Objects", 0, QApplication::UnicodeUTF8));
-    Objects_o05_pushButton->setText(QApplication::translate("Assets", "o5", 0, QApplication::UnicodeUTF8));
-    Objects_o01_pushButton->setText(QApplication::translate("Assets", "o1", 0, QApplication::UnicodeUTF8));
+
+    Objects_pushButton_void0->setText(QApplication::translate("Assets", "Cube", 0, QApplication::UnicodeUTF8));
+    Objects_pushButton_void1->setText(QApplication::translate("Assets", "Truc", 0, QApplication::UnicodeUTF8));
+    Objects_pushButton_terGen->setText(QApplication::translate("Assets", "Generate terrain", 0, QApplication::UnicodeUTF8));
+    Objects_pushButton_terRender->setText(QApplication::translate("Assets", "Render terrain", 0, QApplication::UnicodeUTF8));
+    Objects_pushButton_terWater->setText(QApplication::translate("Assets", "Erosion simulation", 0, QApplication::UnicodeUTF8));
+
+    /*Objects_o05_pushButton->setText(QApplication::translate("Assets", "o5", 0, QApplication::UnicodeUTF8));
     Objects_o03_pushButton->setText(QApplication::translate("Assets", "o3", 0, QApplication::UnicodeUTF8));
-    Objects_o04_pushButton->setText(QApplication::translate("Assets", "o4", 0, QApplication::UnicodeUTF8));
-    Objects_o02_pushButton->setText(QApplication::translate("Assets", "o2", 0, QApplication::UnicodeUTF8));
     Objects_o06_pushButton->setText(QApplication::translate("Assets", "o6", 0, QApplication::UnicodeUTF8));
     Objects_o10_pushButton->setText(QApplication::translate("Assets", "o10", 0, QApplication::UnicodeUTF8));
     Objects_o08_pushButton->setText(QApplication::translate("Assets", "o8", 0, QApplication::UnicodeUTF8));
@@ -347,7 +377,7 @@ public:
     Objects_o35_pushButton->setText(QApplication::translate("Assets", "o35", 0, QApplication::UnicodeUTF8));
     Objects_o33_pushButton->setText(QApplication::translate("Assets", "o33", 0, QApplication::UnicodeUTF8));
     Objects_o34_pushButton->setText(QApplication::translate("Assets", "o34", 0, QApplication::UnicodeUTF8));
-    Objects_o32_pushButton->setText(QApplication::translate("Assets", "o32", 0, QApplication::UnicodeUTF8));
+    Objects_o32_pushButton->setText(QApplication::translate("Assets", "o32", 0, QApplication::UnicodeUTF8));*/
     Parameters_groupBox->setTitle(QApplication::translate("Assets", "Parameters", 0, QApplication::UnicodeUTF8));
     menuFile->setTitle(QApplication::translate("Assets", "File", 0, QApplication::UnicodeUTF8));
     menuExport->setTitle(QApplication::translate("Assets", "Export", 0, QApplication::UnicodeUTF8));

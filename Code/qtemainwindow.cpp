@@ -16,10 +16,13 @@ MainWindow::MainWindow()
   
   // Creation des connect
   createActions();
+
+  terrain = NULL;
 }
 
 MainWindow::~MainWindow()
 {
+	if(terrain != NULL) delete terrain;
 }
 
 void MainWindow::createActions()
@@ -30,11 +33,15 @@ void MainWindow::createActions()
 	connect(interfaceMainWindow.actionExport_ma , SIGNAL(triggered()), this, SLOT(ExportMaya()));
 	connect(interfaceMainWindow.actionExit      , SIGNAL(triggered()), this, SLOT(close()));
 
+	connect(interfaceMainWindow.Objects_pushButton_void0, SIGNAL( clicked() ), this, SLOT(ExecuteToolVoid0()));
+	connect(interfaceMainWindow.Objects_pushButton_void1, SIGNAL( clicked() ), this, SLOT(ExecuteToolVoid1()));
+	connect(interfaceMainWindow.Objects_pushButton_terGen, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerGen()));
+	connect(interfaceMainWindow.Objects_pushButton_terRender, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerRender()));
+	connect(interfaceMainWindow.Objects_pushButton_terWater, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerWater()));
+
 	// Connection des boutons
-	connect(interfaceMainWindow.Objects_o01_pushButton, SIGNAL( clicked() ), this, SLOT(ExecuteTool01()));
-	connect(interfaceMainWindow.Objects_o02_pushButton, SIGNAL( clicked() ), this, SLOT(ExecuteTool02()));
+	/*
 	connect(interfaceMainWindow.Objects_o03_pushButton, SIGNAL( clicked() ), this, SLOT(ExecuteTool03()));
-	connect(interfaceMainWindow.Objects_o04_pushButton, SIGNAL( clicked() ), this, SLOT(ExecuteTool04()));
 	connect(interfaceMainWindow.Objects_o05_pushButton, SIGNAL( clicked() ), this, SLOT(ExecuteTool05()));
 	connect(interfaceMainWindow.Objects_o06_pushButton, SIGNAL( clicked() ), this, SLOT(ExecuteTool06()));
 	connect(interfaceMainWindow.Objects_o07_pushButton, SIGNAL( clicked() ), this, SLOT(ExecuteTool07()));
@@ -66,11 +73,14 @@ void MainWindow::createActions()
 	connect(interfaceMainWindow.Objects_o33_pushButton, SIGNAL( clicked() ), this, SLOT(ExecuteTool33()));
 	connect(interfaceMainWindow.Objects_o34_pushButton, SIGNAL( clicked() ), this, SLOT(ExecuteTool34()));
 	connect(interfaceMainWindow.Objects_o35_pushButton, SIGNAL( clicked() ), this, SLOT(ExecuteTool35()));
-	
+	*/
 	connect(mayaglWidget, SIGNAL( _signalEditHeight(const Vector&,int)), this, SLOT(editingHeight(const Vector&,int)));
 
 	connect(mayaglWidget, SIGNAL( _signalEditSceneLeft (const Vector&) ), this, SLOT(editingSceneLeft (const Vector&)));
 	connect(mayaglWidget, SIGNAL( _signalEditSceneRight(const Vector&) ), this, SLOT(editingSceneRight(const Vector&)));
+
+	/*interfaceMainWindow.Objects_o01_pushButton->setText("Cube");
+	interfaceMainWindow.Objects_o02_pushButton->setText("Cube");*/
 }
 
 void MainWindow::New_Scene()

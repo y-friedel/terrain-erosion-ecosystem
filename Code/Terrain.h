@@ -1,3 +1,6 @@
+#ifndef __TERRAIN__
+#define __TERRAIN__
+
 #include "maya.h"
 #include "math.h"
 
@@ -10,35 +13,33 @@ enum LayerType
 
 class Terrain {
 protected:
-	double* bedRock;
-	double* sandLayer;
-	double* waterLayer;
-	int size;
+	double* _bedRock;
+	double* _sandLayer;
+	double* _waterLayer;
+	double* _waterPipe;
+	double* _waterVelocity;
+	int _size;
+	int _sizeArray;
+
 public:	
-	Terrain(int x)
-	{
-		bedRock = new double[x*x];
-		sandLayer = new double[x*x];
-		waterLayer = new double[x*x];
-
-		for(int j=0; j<x; j++)
-		{
-			for(int i=0; i<x; i++)
-			{
-				bedRock[j*x + i] = 0;
-				sandLayer[j*x + i] = 0;
-				waterLayer[j*x + i] = 0;
-			}
-		}
-
-		size = x;
-	};
-	double getHeight(int x, int y);
-	double getHeightOnLayer(int x, int y, int layer);
-	int getLastLayer(int x, int y);
+	Terrain(int x);
+	double getHeight(int x, int y) const;
+	double getHeightOnLayer(int x, int y, int layer) const;
+	double getRelativeHeightOnLayer(int x, int y, int layer) const;
+	int getLastLayer(int x, int y) const;
 
 	void setLayerHeight(int x, int y, int layer, double height);
 
-	MayaGeometry toMG();
+	MayaGeometry toMG() const;
 
+//Fast Hydrolic Simulation
+protected:
+	void fhsWaterFlow_PipeCell(int i, int j);
+	void fhsWaterFlow_Pipe();
+	void fhsWaterFlow_Move();
+
+public:
+	void fhsIteration();
 };
+
+#endif
