@@ -6,6 +6,7 @@
 #include "mainWindowProjetQT.h" 
 #include "camera.h" 
 #include "plane.h"
+#include "Terrain.h"
 
 
 class MainWindow : public QMainWindow
@@ -31,12 +32,26 @@ private:
   void exportMayaElement(QString &file);
   MayaInstanceAll testGeometry(int);
 
+  //PROJECT TERRAIN
+  Terrain* terrain;
+
+protected:
+	void GenTerrain();
+	void RenderTerrain();
+
 
   public slots:
     void New_Scene();
     void ExportObj();
     void ExportMaya();
 
+    void ExecuteToolVoid0();
+    void ExecuteToolVoid1();
+    void ExecuteToolTerGen();
+	void ExecuteToolTerRender();
+	void ExecuteToolTerWater();
+
+	/*
     void ExecuteTool01();
     void ExecuteTool02();
     void ExecuteTool03();
@@ -72,6 +87,7 @@ private:
     void ExecuteTool33();
     void ExecuteTool34();
     void ExecuteTool35();
+	*/
 
     void modifySelectedButton(int);       // Modification de la selection de l'outil
     void editingSceneLeft(const Vector&); // Action de l'outil (Clic Gauche)
