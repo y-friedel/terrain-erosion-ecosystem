@@ -1,5 +1,6 @@
 #include "qte.h"
 #include "Terrain.h"
+#include "Perlin.h"
 
 /*! 
 \brief TODO 
@@ -44,30 +45,35 @@ void MainWindow::GenTerrain()
 	if(terrain == NULL)
 	{
 		terrain = new Terrain(size);
+		Perlin per = Perlin();
+		per.initBruit2D(size, size, 1, 10);
 
-		for(int j = 0; j<size; j++)
-		{
-			for(int i = 0; i<size; i++)
-			{
-				float a = 0.01;
-				float b = 0;
-				float c = 0.01;
-				float gauss = 10*exp(-(a*pow((float)(i-(size/2)),2) + 2*b*(i-(size/2))*(j-(size/2))+ c*pow((float)(j-(size/2)),2)));
-				terrain->setLayerHeight(i, j, 0, gauss);
-			}
-		}
+		std::cout << "H3H3 " << per.taille << " " << per.hauteur << " " << per.longueur << endl;
+		terrain->setAllLayer(per.valeurs2D, LAYERTYPE_ROCK);
+		//for(int j = 0; j<size; j++)
+		//{
+		//	
+			//initBruit2D(512, 512, 1, 10);
+			//for(int i = 0; i<size; i++)
+			//{
+			//	double gauss = gauss_terrain(i, j, size);
+			//	terrain->setLayerHeight(i, j, 0, gauss);
+			//}
+		//}
 		for(int j = 3; j<size/2; j++)
 		{
 			for(int i = 3; i<size/2; i++)
 			{
-				terrain->setLayerHeight(i,j,LAYERTYPE_SAND,1-(i+j)/64);
+				//terrain->setLayerHeight(i,j,LAYERTYPE_SAND,1-(i+j)/*/(size/4.)*/);
+				terrain->setLayerHeight(i,j,LAYERTYPE_SAND, 3);
 			}
 		}
 		for(int j = 3*size/8; j<(size/2)+3; j++)
 		{
 			for(int i = 3*size/8; i<(size/2)+3; i++)
 			{
-				terrain->setLayerHeight(i,j,LAYERTYPE_WATER,1-(i+j)/64);
+				//terrain->setLayerHeight(i,j,LAYERTYPE_WATER,1-(i+j)/*/(size/4.)*/);
+				terrain->setLayerHeight(i,j,LAYERTYPE_WATER,3);
 			}
 		}
 	}
@@ -80,9 +86,10 @@ void MainWindow::RenderTerrain()
 	{
 		MayaGeometry mg_terrain = terrain->toMG();
 		//mg_terrain.setMaterialObject(mo);
-
+		int size = terrain->getSize();
 		mayaglWidget->clearWorld();
 		MayaGeometryAll mga = MayaGeometrySet(mg_terrain,MayaFrame::Id);
+		mga.Translate(Vector(-size/2., -size/2., -10));
 		mayaglWidget->setWorld(mga);
 	}
 }
