@@ -87,6 +87,8 @@ int Terrain::getLastLayer(int x, int y) const
 
 }
 
+
+
 void Terrain::setLayerHeight(int x, int y, int layer, double height)
 {
 	int ind = y*_size + x;
@@ -101,6 +103,14 @@ void Terrain::setLayerHeight(int x, int y, int layer, double height)
 	if(layer == LAYERTYPE_WATER)
 	{
 		_waterLayer[ind] = height;
+	}
+}
+
+void Terrain::setAllLayer(double* height_map, int layer)
+{
+	for(int i=0; i<_sizeArray; i++)
+	{
+		_bedRock[i] = height_map[i];
 	}
 }
 

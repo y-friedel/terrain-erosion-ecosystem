@@ -4,6 +4,9 @@
 #include "maya.h"
 #include "math.h"
 
+#include "Stuff.h"
+//#include "Perlin.h"
+
 enum LayerType
 {
 	LAYERTYPE_ROCK,
@@ -27,7 +30,11 @@ public:
 	double getHeightOnLayer(int x, int y, int layer) const;
 	double getRelativeHeightOnLayer(int x, int y, int layer) const;
 	int getLastLayer(int x, int y) const;
-
+	int getSize()
+{
+	return _size;
+}
+	void setAllLayer(double* height_map, int layer);
 	void setLayerHeight(int x, int y, int layer, double height);
 
 	MayaGeometry toMG() const;
