@@ -10,8 +10,16 @@ void Perlin::initBruit2D(int l, int h, int p, int n)
     longueur = l;
     hauteur = h;
     pas2D = p;
-    longueur_max = (int) ceil(longueur * pow(2., nombre_octaves2D  - 1)  / pas2D);
-    int hauteur_max = (int) ceil(hauteur * pow(2., nombre_octaves2D  - 1)  / pas2D);
+    //longueur_max = (int) ceil(longueur * pow(2., nombre_octaves2D  - 1)  / pas2D);
+    //int hauteur_max = (int) ceil(hauteur * pow(2., nombre_octaves2D  - 1)  / pas2D);
+
+	//V1
+	//longueur_max = (int) ceil(longueur * nombre_octaves2D*2. / pas2D);
+	//int hauteur_max = (int) ceil(hauteur * nombre_octaves2D*2. / pas2D);
+
+		//V2
+	longueur_max = longueur;
+	int hauteur_max = hauteur;
 
     valeurs2D = (double*) malloc(sizeof(double) * longueur_max * hauteur_max);
 
