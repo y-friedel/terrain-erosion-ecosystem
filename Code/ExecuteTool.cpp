@@ -40,13 +40,13 @@ void MainWindow::ExecuteToolVoid1(){
 
 void MainWindow::GenTerrain()
 {
-	int size = 32;
+	int size = 512;
 
 	if(terrain == NULL)
 	{
 		terrain = new Terrain(size);
 		Perlin per = Perlin();
-		per.initBruit2D(size, size, 1, 10);
+		per.initBruit2D(size, size, 0.5, 200);
 
 		std::cout << "H3H3 " << per.taille << " " << per.hauteur << " " << per.longueur << endl;
 		terrain->setAllLayer(per.valeurs2D, LAYERTYPE_ROCK);
