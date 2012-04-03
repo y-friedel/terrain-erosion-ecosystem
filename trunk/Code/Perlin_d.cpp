@@ -138,7 +138,7 @@ double* Perlin_d::generate()
 
 	for(int i=0; i<size*size; i++)
 	{
-		for(int s=0; s<t_layer.size(); s++)
+		for(unsigned int s=0; s<t_layer.size(); s++)
 		{
 			result[i]+=(t_layer[s]->v[i])*(t_layer[s]->persistence);
 							//std::cout<< "hahahah L"<< s << " " << result[i] << std::endl;
@@ -147,4 +147,62 @@ double* Perlin_d::generate()
 
 	return result;
 
+}
+
+double gaussianFunction(double x, double sig)
+{
+	return exp((-(x*x)/(2.*sig*sig)))/(sig*sqrt(2.*3.14159265));
+}
+
+
+double* gaussianFilter(double* input, int size,  double sig)
+{
+	int ks = sig*3+1;
+	double level = 0;
+
+	double* output = new double[size*size];
+
+	//init
+	for(int j=0; j<size*size; j++)
+	{
+		output[j] = 0;
+	}
+
+
+	for(int j=0; j<size; j++)
+	{
+		for(int i=0; i<size; i++)
+		{
+			level=0;
+			for(int x=-ks; x<=ks; x++)
+			{
+				if(i+x >= 0 && i+x < size)
+				{
+					//level+= (getPixel(inputImg, i+x, j)[0] * gaussianFunction(x, sig));
+					level+= (input[i+x + size*j] * gaussianFunction(x, sig));
+				}
+			}
+			output[i+ size*j] = level;
+		}
+	}
+
+	for(int j=0; j<size; j++)
+	{
+		for(int i=0; i<size; i++)
+		{
+			level = 0;
+			for(int y=-ks; y<=ks; y++)
+			{
+				if(j+y >= 0 && j+y < size)
+				{
+					//r+= (getPixel(tmpImg, i, j+y)[0] * gaussianFunction(y, sig));
+					level+= (input[i + size*(j+y)] * gaussianFunction(y, sig));
+
+				}
+				output[i+ size*j] = level;
+			}
+		}
+	}
+
+	return output;
 }

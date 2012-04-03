@@ -40,3 +40,5 @@ public:
 
 };
 
+double gaussianFunction(double x, double sig);
+double* gaussianFilter(double* input, int size,  double sig);
