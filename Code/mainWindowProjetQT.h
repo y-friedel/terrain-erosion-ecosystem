@@ -38,7 +38,8 @@ public:
     QPushButton *Objects_pushButton_void0;
     QPushButton *Objects_pushButton_void1;
 
-    QPushButton *Objects_pushButton_terGen;
+    QPushButton *Objects_pushButton_terGenPerlin;
+    QPushButton *Objects_pushButton_terGenGaussian;
     QPushButton *Objects_pushButton_terRender;
     QPushButton *Objects_pushButton_terWater;
 
@@ -119,30 +120,48 @@ public:
     Objects_groupBox->setSizePolicy(sizePolicy);
     Objects_groupBox->setMinimumSize(QSize(153, 230));
 
+	int posY = 20;
+	int stepY = 23;
+
+	/* LINE */
     Objects_pushButton_void0 = new QPushButton(Objects_groupBox);
     Objects_pushButton_void0->setObjectName(QString::fromUtf8("Objects_pushButton_void0"));
-    Objects_pushButton_void0->setGeometry(QRect(0, 20, 70, 23));
+    Objects_pushButton_void0->setGeometry(QRect(0, posY, 70, 23));
     Objects_pushButton_void0->setCheckable(true);
 
     Objects_pushButton_void1 = new QPushButton(Objects_groupBox);
     Objects_pushButton_void1->setObjectName(QString::fromUtf8("Objects_pushButton_void1"));
-    Objects_pushButton_void1->setGeometry(QRect(70, 20, 70, 23));
+    Objects_pushButton_void1->setGeometry(QRect(70, posY, 70, 23));
     Objects_pushButton_void1->setCheckable(true);
+	posY += stepY;
 
-    Objects_pushButton_terGen = new QPushButton(Objects_groupBox);
-    Objects_pushButton_terGen->setObjectName(QString::fromUtf8("Objects_pushButton_terGen"));
-    Objects_pushButton_terGen->setGeometry(QRect(0, 43, 140, 23));
-    Objects_pushButton_terGen->setCheckable(true);
+	/* LINE */
+    Objects_pushButton_terGenPerlin = new QPushButton(Objects_groupBox);
+    Objects_pushButton_terGenPerlin->setObjectName(QString::fromUtf8("Objects_pushButton_terGenPerlin"));
+    Objects_pushButton_terGenPerlin->setGeometry(QRect(0, posY, 140, 23));
+    Objects_pushButton_terGenPerlin->setCheckable(true);
+	posY += stepY;
 
+	/* LINE */
+    Objects_pushButton_terGenGaussian = new QPushButton(Objects_groupBox);
+    Objects_pushButton_terGenGaussian->setObjectName(QString::fromUtf8("Objects_pushButton_terGenGaussian"));
+    Objects_pushButton_terGenGaussian->setGeometry(QRect(0, posY, 140, 23));
+    Objects_pushButton_terGenGaussian->setCheckable(true);
+	posY += stepY;
+
+	/* LINE */
     Objects_pushButton_terRender = new QPushButton(Objects_groupBox);
     Objects_pushButton_terRender->setObjectName(QString::fromUtf8("Objects_pushButton_terRender"));
-    Objects_pushButton_terRender->setGeometry(QRect(0, 66, 140, 23));
+    Objects_pushButton_terRender->setGeometry(QRect(0, posY, 140, 23));
     Objects_pushButton_terRender->setCheckable(true);
+	posY += stepY;
 
+	/* LINE */
     Objects_pushButton_terWater = new QPushButton(Objects_groupBox);
     Objects_pushButton_terWater->setObjectName(QString::fromUtf8("Objects_pushButton_terWater"));
-    Objects_pushButton_terWater->setGeometry(QRect(0, 89, 140, 23));
+    Objects_pushButton_terWater->setGeometry(QRect(0, posY, 140, 23));
     Objects_pushButton_terWater->setCheckable(true);
+	posY += stepY;
 
 	/*
     Objects_o05_pushButton = new QPushButton(Objects_groupBox);
@@ -342,7 +361,8 @@ public:
 
     Objects_pushButton_void0->setText(QApplication::translate("Assets", "Cube", 0, QApplication::UnicodeUTF8));
     Objects_pushButton_void1->setText(QApplication::translate("Assets", "Truc", 0, QApplication::UnicodeUTF8));
-    Objects_pushButton_terGen->setText(QApplication::translate("Assets", "Generate terrain", 0, QApplication::UnicodeUTF8));
+    Objects_pushButton_terGenPerlin->setText(QApplication::translate("Assets", "Gen Perlin", 0, QApplication::UnicodeUTF8));
+    Objects_pushButton_terGenGaussian->setText(QApplication::translate("Assets", "Gen Gaussian", 0, QApplication::UnicodeUTF8));
     Objects_pushButton_terRender->setText(QApplication::translate("Assets", "Render terrain", 0, QApplication::UnicodeUTF8));
     Objects_pushButton_terWater->setText(QApplication::translate("Assets", "Erosion simulation", 0, QApplication::UnicodeUTF8));
 
