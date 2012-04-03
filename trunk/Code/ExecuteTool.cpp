@@ -39,13 +39,14 @@ void MainWindow::ExecuteToolVoid1(){
   mayaglWidget->setWorld(mga);
 }
 
-void MainWindow::GenTerrain()
+void MainWindow::GenTerrainPerlin()
 {
 	int size = 512;
 
 	if(terrain == NULL)
 	{
 		terrain = new Terrain(size);
+
 /** PERLIN V1 ********************************************************************************/
 		//Perlin per = Perlin();
 		//per.initBruit2D(size, size, 100, 4);
@@ -54,20 +55,6 @@ void MainWindow::GenTerrain()
 		//std::cout << "H3H3 " << per.taille << " " << per.hauteur << " " << per.longueur << endl;
 		//terrain->setAllLayer(per.valeurs2D, LAYERTYPE_ROCK);
 
-
-/** GAUSSIAN *********************************************************************************/		
-		
-		//for(int j = 0; j<size; j++)
-		//{
-		//	
-			//initBruit2D(512, 512, 1, 10);
-			//for(int i = 0; i<size; i++)
-			//{
-			//	double gauss = gauss_terrain(i, j, size);
-			//	terrain->setLayerHeight(i, j, 0, gauss);
-			//}
-		//}
-
 /** PERLIN V2 ********************************************************************************/
 
 		Perlin_d per_d = Perlin_d(512,24);
@@ -75,9 +62,6 @@ void MainWindow::GenTerrain()
 
 
 		terrain->setAllLayer(per_ter, LAYERTYPE_ROCK);
-
-
-
 
 		for(int j = 3; j<size/2; j++)
 		{
@@ -96,7 +80,27 @@ void MainWindow::GenTerrain()
 			}
 		}
 	}
+}
 
+void MainWindow::GenTerrainGaussian()
+{
+	int size = 512;
+
+	if(terrain == NULL)
+	{
+		terrain = new Terrain(size);
+
+		for(int j = 0; j<size; j++)
+		{
+			
+			//initBruit2D(512, 512, 1, 10);
+			for(int i = 0; i<size; i++)
+			{
+				double gauss = gauss_terrain(i, j, size);
+				terrain->setLayerHeight(i, j, 0, gauss);
+			}
+		}
+	}
 }
 
 void MainWindow::RenderTerrain()
@@ -113,9 +117,15 @@ void MainWindow::RenderTerrain()
 	}
 }
 
-void MainWindow::ExecuteToolTerGen()
+void MainWindow::ExecuteToolTerGenGaussian()
 {
-	GenTerrain();
+	GenTerrainGaussian();
+	RenderTerrain();
+}
+
+void MainWindow::ExecuteToolTerGenPerlin()
+{
+	GenTerrainPerlin();
 	RenderTerrain();
 }
 
@@ -128,7 +138,11 @@ void MainWindow::ExecuteToolTerWater()
 {
 	if(terrain != NULL)
 	{
-		terrain->fhsIteration();
+		for(int i=0; i<10; i++)
+		{
+			terrain->fhsIteration();
+			RenderTerrain();
+		}
 	}
 }
 
