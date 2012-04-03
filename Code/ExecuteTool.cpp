@@ -47,19 +47,11 @@ void MainWindow::GenTerrainPerlin()
 	{
 		terrain = new Terrain(size);
 
-/** PERLIN V1 ********************************************************************************/
-		//Perlin per = Perlin();
-		//per.initBruit2D(size, size, 100, 4);
-
-
-		//std::cout << "H3H3 " << per.taille << " " << per.hauteur << " " << per.longueur << endl;
-		//terrain->setAllLayer(per.valeurs2D, LAYERTYPE_ROCK);
-
 /** PERLIN V2 ********************************************************************************/
 
-		Perlin_d per_d = Perlin_d(512,24);
+		Perlin_d per_d = Perlin_d(size,24);
 		double* per_ter = per_d.generate();
-
+		per_ter = gaussianFilter(per_ter, size, 1);
 
 		terrain->setAllLayer(per_ter, LAYERTYPE_ROCK);
 
@@ -68,7 +60,7 @@ void MainWindow::GenTerrainPerlin()
 			for(int i = 3; i<size/2; i++)
 			{
 				//terrain->setLayerHeight(i,j,LAYERTYPE_SAND,1-(i+j)/*/(size/4.)*/);
-				terrain->setLayerHeight(i,j,LAYERTYPE_SAND, 3);
+				terrain->setLayerHeight(i,j,LAYERTYPE_SAND, 5);
 			}
 		}
 		for(int j = 3*size/8; j<(size/2)+3; j++)
@@ -108,10 +100,12 @@ void MainWindow::RenderTerrain()
 	if(terrain != NULL)
 	{
 		MayaGeometry mg_terrain = terrain->toMG();
+		MayaGeometry mg_water = terrain->waterToMG();
 		//mg_terrain.setMaterialObject(mo);
 		int size = terrain->getSize();
 		mayaglWidget->clearWorld();
 		MayaGeometryAll mga = MayaGeometrySet(mg_terrain,MayaFrame::Id);
+		//mga.Append(mg_water);
 		mga.Translate(Vector(-size/2., -size/2., -255));
 		mayaglWidget->setWorld(mga);
 	}

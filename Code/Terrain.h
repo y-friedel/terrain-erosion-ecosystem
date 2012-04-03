@@ -38,6 +38,8 @@ public:
 	void setLayerHeight(int x, int y, int layer, double height);
 
 	MayaGeometry toMG() const;
+	MayaGeometry noWaterToMG() const;
+	MayaGeometry waterToMG() const;
 
 //Fast Hydrolic Simulation
 protected:
