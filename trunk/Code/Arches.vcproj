@@ -191,10 +191,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Perlin.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Perlin_d.cpp"
 				>
 			</File>
@@ -234,10 +230,6 @@
 			>
 			<File
 				RelativePath=".\mainWindowProjetQT.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Perlin.h"
 				>
 			</File>
 			<File

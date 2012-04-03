@@ -70,8 +70,10 @@ void MainWindow::GenTerrain()
 
 /** PERLIN V2 ********************************************************************************/
 
-		Perlin_d per_d = Perlin_d(512,4);
+		Perlin_d per_d = Perlin_d(512,24);
 		double* per_ter = per_d.generate();
+
+
 		terrain->setAllLayer(per_ter, LAYERTYPE_ROCK);
 
 

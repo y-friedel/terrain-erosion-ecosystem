@@ -207,7 +207,8 @@ MayaGeometry Terrain::toMG() const
 	//Création du MG
 	
 	MaterialObject mo={ ShaderPhongVertexColor, VertexColor, AColor(0.5,0.5,0.5,1.0), AColor(0.3,0.3,0.3,1.0), AColor(0.1,0.1,0.1,1.0), 50.,QString("")};
-	//MaterialObject mo={ ShaderPhong, VertexColor, AColor(0.1,0.1,0.1,1.0), AColor(0.5,0.2,0.2,1.0), AColor(0.1,0.1,0.1,1.0), 50.,QString("")};
+	//MaterialObject mo={ ShaderPhongVertexColor, Wireframe, AColor(0.5,0.5,0.5,1.0), AColor(0.3,0.3,0.3,1.0), AColor(0.1,0.1,0.1,1.0), 50.,QString("")};
+
 	MayaGeometry m = MayaGeometry("mg_terrain", vec_point, vec_normale, vec_couleur, vec_tri_int, mo);
 
 	return m;
