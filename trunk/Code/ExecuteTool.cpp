@@ -1,6 +1,7 @@
 #include "qte.h"
 #include "Terrain.h"
-#include "Perlin.h"
+//#include "Perlin.h"
+#include "Perlin_d.h"
 
 /*! 
 \brief TODO 
@@ -45,11 +46,17 @@ void MainWindow::GenTerrain()
 	if(terrain == NULL)
 	{
 		terrain = new Terrain(size);
-		Perlin per = Perlin();
-		per.initBruit2D(size, size, 0.5, 200);
+/** PERLIN V1 ********************************************************************************/
+		//Perlin per = Perlin();
+		//per.initBruit2D(size, size, 100, 4);
 
-		std::cout << "H3H3 " << per.taille << " " << per.hauteur << " " << per.longueur << endl;
-		terrain->setAllLayer(per.valeurs2D, LAYERTYPE_ROCK);
+
+		//std::cout << "H3H3 " << per.taille << " " << per.hauteur << " " << per.longueur << endl;
+		//terrain->setAllLayer(per.valeurs2D, LAYERTYPE_ROCK);
+
+
+/** GAUSSIAN *********************************************************************************/		
+		
 		//for(int j = 0; j<size; j++)
 		//{
 		//	
@@ -60,6 +67,16 @@ void MainWindow::GenTerrain()
 			//	terrain->setLayerHeight(i, j, 0, gauss);
 			//}
 		//}
+
+/** PERLIN V2 ********************************************************************************/
+
+		Perlin_d per_d = Perlin_d(512,4);
+		double* per_ter = per_d.generate();
+		terrain->setAllLayer(per_ter, LAYERTYPE_ROCK);
+
+
+
+
 		for(int j = 3; j<size/2; j++)
 		{
 			for(int i = 3; i<size/2; i++)
@@ -89,7 +106,7 @@ void MainWindow::RenderTerrain()
 		int size = terrain->getSize();
 		mayaglWidget->clearWorld();
 		MayaGeometryAll mga = MayaGeometrySet(mg_terrain,MayaFrame::Id);
-		mga.Translate(Vector(-size/2., -size/2., -10));
+		mga.Translate(Vector(-size/2., -size/2., -255));
 		mayaglWidget->setWorld(mga);
 	}
 }
