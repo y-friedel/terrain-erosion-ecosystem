@@ -206,3 +206,74 @@ double* gaussianFilter(double* input, int size,  double sig)
 
 	return output;
 }
+
+double* gaussianLand(double* input, int size)
+{
+	int sig;
+	int ks /*sig*3+1*/;
+	double level = 0;
+
+	double* temp = new double[size*size];
+	double* output = new double[size*size];
+
+	//init
+	for(int j=0; j<size*size; j++)
+	{
+		output[j] = 0;
+		temp[j] = 0;
+	}
+
+
+	for(int j=0; j<size; j++)
+	{
+		for(int i=0; i<size; i++)
+		{
+			level=0;
+			if(input[i + size*j]>85)
+			{
+				sig = 3;
+
+			}else{
+				sig = 10;
+			}
+			ks = sig*3+1;
+			for(int x=-ks; x<=ks; x++)
+			{
+				if(i+x >= 0 && i+x < size)
+				{
+					//level+= (getPixel(inputImg, i+x, j)[0] * gaussianFunction(x, sig));
+					level+= (input[i+x + size*j] * gaussianFunction(x, sig));
+				}
+			}
+			temp[i+ size*j] = level;
+		}
+	}
+
+	for(int j=0; j<size; j++)
+	{
+		for(int i=0; i<size; i++)
+		{
+			level = 0;
+			if(input[i + size*j]>85)
+			{
+				sig = 3;
+
+			}else{
+				sig = 10;
+			}
+			ks = sig*3+1;
+			for(int y=-ks; y<=ks; y++)
+			{
+				if(j+y >= 0 && j+y < size)
+				{
+					//r+= (getPixel(tmpImg, i, j+y)[0] * gaussianFunction(y, sig));
+					level+= (input[i + size*(j+y)] * gaussianFunction(y, sig));
+
+				}
+				output[i+ size*j] = (level + temp[i+ size*j])/2;
+			}
+		}
+	}
+
+	return output;
+}

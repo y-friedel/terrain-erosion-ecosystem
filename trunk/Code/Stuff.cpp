@@ -5,9 +5,9 @@ const double pi = 3.14159265;
 double gauss_terrain(int x, int y, int size)
 {
 	double a = (double)(1./size);
-	double b = 0.01;
+	double b = 0.0002;
 	double c = (double)(1./size);
-	return size*exp(-(a*pow((double)(x-(size/2)),2) + 2*b*(x-(size/2))*(y-(size/2))+ c*pow((double)(y-(size/2)),2)));
+	return (size/3)*exp(-(a*pow((float)(x-(size/2)),2) + 2*b*(x-(size/2))*(y-(size/2))+ c*pow((float)(y-(size/2)),2)));
 }
 
 
