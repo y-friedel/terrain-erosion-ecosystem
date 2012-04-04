@@ -229,12 +229,13 @@ double* gaussianLand(double* input, int size)
 		for(int i=0; i<size; i++)
 		{
 			level=0;
-			if(input[i + size*j]>85)
+			if(input[i + size*j]>170)
 			{
+				sig = 1;
+			}else if (input[i + size*j]>85){
 				sig = 3;
-
 			}else{
-				sig = 10;
+				sig = 5;
 			}
 			ks = sig*3+1;
 			for(int x=-ks; x<=ks; x++)
@@ -254,12 +255,13 @@ double* gaussianLand(double* input, int size)
 		for(int i=0; i<size; i++)
 		{
 			level = 0;
-			if(input[i + size*j]>85)
+			if(input[i + size*j]>170)
 			{
+				sig = 1;
+			}else if (input[i + size*j]>85){
 				sig = 3;
-
 			}else{
-				sig = 10;
+				sig = 5;
 			}
 			ks = sig*3+1;
 			for(int y=-ks; y<=ks; y++)
