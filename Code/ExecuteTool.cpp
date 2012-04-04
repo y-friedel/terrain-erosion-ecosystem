@@ -51,7 +51,7 @@ void MainWindow::GenTerrainPerlin()
 
 		Perlin_d per_d = Perlin_d(size,24);
 		double* per_ter = per_d.generate();
-		per_ter = gaussianFilter(per_ter, size, 1);
+		per_ter = gaussianLand(per_ter, size);
 
 		terrain->setAllLayer(per_ter, LAYERTYPE_ROCK);
 

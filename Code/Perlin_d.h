@@ -42,3 +42,4 @@ public:
 
 double gaussianFunction(double x, double sig);
 double* gaussianFilter(double* input, int size,  double sig);
+double* gaussianLand(double* input, int size);
