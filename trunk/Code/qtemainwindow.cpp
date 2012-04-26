@@ -35,8 +35,9 @@ void MainWindow::createActions()
 
 	connect(interfaceMainWindow.Objects_pushButton_void0, SIGNAL( clicked() ), this, SLOT(ExecuteToolVoid0()));
 	connect(interfaceMainWindow.Objects_pushButton_void1, SIGNAL( clicked() ), this, SLOT(ExecuteToolVoid1()));
-	connect(interfaceMainWindow.Objects_pushButton_terGenPerlin, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerGenPerlin()));
+	connect(interfaceMainWindow.Objects_pushButton_terGenFlat, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerGenFlat()));
 	connect(interfaceMainWindow.Objects_pushButton_terGenGaussian, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerGenGaussian()));
+	connect(interfaceMainWindow.Objects_pushButton_terGenPerlin, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerGenPerlin()));
 	connect(interfaceMainWindow.Objects_pushButton_terRender, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerRender()));
 	connect(interfaceMainWindow.Objects_pushButton_terWater, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerWater()));
 

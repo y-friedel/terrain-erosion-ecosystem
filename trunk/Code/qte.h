@@ -36,8 +36,9 @@ private:
   Terrain* terrain;
 
 protected:
-	void GenTerrainPerlin();
+	void GenTerrainFlat();
 	void GenTerrainGaussian();
+	void GenTerrainPerlin();
 	void RenderTerrain();
 
 
@@ -48,6 +49,7 @@ protected:
 
     void ExecuteToolVoid0();
     void ExecuteToolVoid1();
+    void ExecuteToolTerGenFlat();
     void ExecuteToolTerGenGaussian();
     void ExecuteToolTerGenPerlin();
 	void ExecuteToolTerRender();

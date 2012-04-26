@@ -436,7 +436,7 @@ MayaGeometry Terrain::waterToMG() const
 
 void Terrain::fhsWaterFlow_PipeCell(int i, int j)
 {
-	const double dt = 0.000001;
+	const double dt = 0.0001;
 	const double g = 9.809; //Gravity on Paris
 	const double A = 1.0;
 	const double l = 1./0.01;
@@ -491,6 +491,8 @@ void Terrain::fhsWaterFlow_PipeCell(int i, int j)
 		_waterPipe[ind*4+3] *= wh/ws;
 	}
 	/*double K = getRelativeHeightOnLayer(i, j, LAYERTYPE_WATER);*/
+
+
 }
 
 void Terrain::fhsWaterFlow_Pipe()
@@ -546,7 +548,7 @@ void Terrain::fhsWaterFlow_Move()
 			//Bottom
 			if(j > 0)
 			{
-				ind = (j-1)*_size+i+1;
+				ind = (j-1)*_size+i;
 				wl += _waterPipe[ind*4+1];
 			}
 

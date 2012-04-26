@@ -89,10 +89,31 @@ void MainWindow::GenTerrainGaussian()
 			for(int i = 0; i<size; i++)
 			{
 				double gauss = gauss_terrain(i, j, size);
-				terrain->setLayerHeight(i, j, 0, gauss);
+				terrain->setLayerHeight(i, j, LAYERTYPE_ROCK, gauss);
 			}
 		}
 	}
+}
+
+void MainWindow::GenTerrainFlat()
+{
+	int size = 512;
+
+	if(terrain == NULL)
+	{
+		terrain = new Terrain(size);
+
+		for(int j = 0; j<size; j++)
+		{
+			for(int i = 0; i<size; i++)
+			{
+				terrain->setLayerHeight(i, j, LAYERTYPE_ROCK, 1);
+			}
+		}
+
+		terrain->setLayerHeight(size/2, size/2, LAYERTYPE_WATER, 1);
+	}
+
 }
 
 void MainWindow::RenderTerrain()
@@ -106,9 +127,15 @@ void MainWindow::RenderTerrain()
 		mayaglWidget->clearWorld();
 		MayaGeometryAll mga = MayaGeometrySet(mg_terrain,MayaFrame::Id);
 		//mga.Append(mg_water);
-		mga.Translate(Vector(-size/2., -size/2., -255));
+		mga.Translate(Vector(-size/2., -size/2., -128));
 		mayaglWidget->setWorld(mga);
 	}
+}
+
+void MainWindow::ExecuteToolTerGenFlat()
+{
+	GenTerrainFlat();
+	RenderTerrain();
 }
 
 void MainWindow::ExecuteToolTerGenGaussian()
