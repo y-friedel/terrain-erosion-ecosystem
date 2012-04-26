@@ -438,7 +438,7 @@ void Terrain::fhsWaterFlow_PipeCell(int i, int j)
 {
 	const double dt = 0.0001;
 	const double g = 9.809; //Gravity on Paris
-	const double A = 1.0;
+	const double A = 2.0;
 	const double l = 1./0.01;
 
 	int ind = j*_size+i;
@@ -483,12 +483,17 @@ void Terrain::fhsWaterFlow_PipeCell(int i, int j)
 	ws += _waterPipe[ind*4+1];
 	ws += _waterPipe[ind*4+2];
 	ws += _waterPipe[ind*4+3];
+
 	if(ws > wh)
 	{
-		_waterPipe[ind*4  ] *= wh/ws;
-		_waterPipe[ind*4+1] *= wh/ws;
-		_waterPipe[ind*4+2] *= wh/ws;
-		_waterPipe[ind*4+3] *= wh/ws;
+		double ratio;
+		if(ws > 0.1) ratio = wh/ws;
+		else ratio = 0;
+
+		_waterPipe[ind*4  ] *= ratio;
+		_waterPipe[ind*4+1] *= ratio;
+		_waterPipe[ind*4+2] *= ratio;
+		_waterPipe[ind*4+3] *= ratio;
 	}
 	/*double K = getRelativeHeightOnLayer(i, j, LAYERTYPE_WATER);*/
 
@@ -511,6 +516,7 @@ void Terrain::fhsWaterFlow_Pipe()
 void Terrain::fhsWaterFlow_Move()
 {
 	double wl, wmotion = 0;
+	bool border;
 	int ind;
 	for(int j=0; j<_size; j++)
 	{
@@ -553,6 +559,8 @@ void Terrain::fhsWaterFlow_Move()
 			}
 
 			wmotion += wl;
+
+			double dd = getRelativeHeightOnLayer(i, j, LAYERTYPE_WATER) + wl / 2.0;
 
 			setLayerHeight(i, j, LAYERTYPE_WATER, wl);
 		}
