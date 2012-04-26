@@ -136,7 +136,7 @@ MayaGeometry Terrain::toMG() const
 			}
 			if(getLastLayer(i, j) == LAYERTYPE_WATER)
 			{
-				vec_couleur.append(Vector(0.2,0.2,0.6));
+				vec_couleur.append(Vector(0.3,0.3,0.3));
 				vec_point.append(Vector(i, j, getHeightOnLayer(i, j, LAYERTYPE_SAND)));
 			}
 		}
@@ -508,7 +508,7 @@ void Terrain::fhsWaterFlow_Move()
 				wl += _waterPipe[nInd*4+1];
 			}
 
-			if(wl < 0.01) wl = 0;
+			//if(wl < 0.01) wl = 0;
 
 			wmotion += wl;
 
@@ -523,10 +523,7 @@ void Terrain::fhsWaterFlow_Move()
 
 void Terrain::fhsIteration()
 {
-	std::cout << "FHS Pipe" << std::endl;
 	fhsWaterFlow_Pipe();
 	fhsWaterFlow_Speed();
-	std::cout << "FHS Move" << std::endl;
 	fhsWaterFlow_Move();
-	std::cout << "FHS End" << std::endl;
 }
