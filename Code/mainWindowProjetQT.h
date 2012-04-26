@@ -40,6 +40,7 @@ public:
 
     QPushButton *Objects_pushButton_terGenPerlin;
     QPushButton *Objects_pushButton_terGenGaussian;
+    QPushButton *Objects_pushButton_terGenFlat;
     QPushButton *Objects_pushButton_terRender;
     QPushButton *Objects_pushButton_terWater;
 
@@ -136,10 +137,10 @@ public:
 	posY += stepY;
 
 	/* LINE */
-    Objects_pushButton_terGenPerlin = new QPushButton(Objects_groupBox);
-    Objects_pushButton_terGenPerlin->setObjectName(QString::fromUtf8("Objects_pushButton_terGenPerlin"));
-    Objects_pushButton_terGenPerlin->setGeometry(QRect(0, posY, 140, 23));
-    Objects_pushButton_terGenPerlin->setCheckable(true);
+    Objects_pushButton_terGenFlat = new QPushButton(Objects_groupBox);
+    Objects_pushButton_terGenFlat->setObjectName(QString::fromUtf8("Objects_pushButton_terGenFlat"));
+    Objects_pushButton_terGenFlat->setGeometry(QRect(0, posY, 140, 23));
+    Objects_pushButton_terGenFlat->setCheckable(true);
 	posY += stepY;
 
 	/* LINE */
@@ -147,6 +148,13 @@ public:
     Objects_pushButton_terGenGaussian->setObjectName(QString::fromUtf8("Objects_pushButton_terGenGaussian"));
     Objects_pushButton_terGenGaussian->setGeometry(QRect(0, posY, 140, 23));
     Objects_pushButton_terGenGaussian->setCheckable(true);
+	posY += stepY;
+
+	/* LINE */
+    Objects_pushButton_terGenPerlin = new QPushButton(Objects_groupBox);
+    Objects_pushButton_terGenPerlin->setObjectName(QString::fromUtf8("Objects_pushButton_terGenPerlin"));
+    Objects_pushButton_terGenPerlin->setGeometry(QRect(0, posY, 140, 23));
+    Objects_pushButton_terGenPerlin->setCheckable(true);
 	posY += stepY;
 
 	/* LINE */
@@ -361,8 +369,9 @@ public:
 
     Objects_pushButton_void0->setText(QApplication::translate("Assets", "Cube", 0, QApplication::UnicodeUTF8));
     Objects_pushButton_void1->setText(QApplication::translate("Assets", "Truc", 0, QApplication::UnicodeUTF8));
-    Objects_pushButton_terGenPerlin->setText(QApplication::translate("Assets", "Gen Perlin", 0, QApplication::UnicodeUTF8));
+    Objects_pushButton_terGenFlat->setText(QApplication::translate("Assets", "Gen Flat", 0, QApplication::UnicodeUTF8));
     Objects_pushButton_terGenGaussian->setText(QApplication::translate("Assets", "Gen Gaussian", 0, QApplication::UnicodeUTF8));
+    Objects_pushButton_terGenPerlin->setText(QApplication::translate("Assets", "Gen Perlin", 0, QApplication::UnicodeUTF8));
     Objects_pushButton_terRender->setText(QApplication::translate("Assets", "Render terrain", 0, QApplication::UnicodeUTF8));
     Objects_pushButton_terWater->setText(QApplication::translate("Assets", "Erosion simulation", 0, QApplication::UnicodeUTF8));
 
