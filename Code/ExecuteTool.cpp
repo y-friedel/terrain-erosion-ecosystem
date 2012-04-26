@@ -61,7 +61,8 @@ void MainWindow::GenTerrainPerlin()
 			{
 				//terrain->setLayerHeight(i,j,LAYERTYPE_SAND,1-(i+j)/*/(size/4.)*/);
 				//terrain->setLayerHeight(i,j,LAYERTYPE_SAND, 5);
-				double gauss = gauss_terrain(i, j, size)/5;
+				
+				double gauss = gauss_terrain(i, j, size)/3;
 				if(gauss > 1)
 				{
 					terrain->setLayerHeight(i-size/4,j,LAYERTYPE_WATER,gauss);
@@ -171,8 +172,12 @@ void MainWindow::ExecuteToolTerWater()
 {
 	if(terrain != NULL)
 	{
-		for(int i=0; i<10; i++)
+		int center = terrain->getSize()/2;
+		for(int i=0; i<100; i++)
 		{
+			double wl = terrain->getRelativeHeightOnLayer(center,center,LAYERTYPE_WATER);
+			terrain->setLayerHeight(center,center,LAYERTYPE_WATER,wl+100);
+
 			terrain->fhsIteration();
 
 			MayaGeometry mg_terrain = terrain->toMG();
