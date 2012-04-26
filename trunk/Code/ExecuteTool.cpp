@@ -55,22 +55,30 @@ void MainWindow::GenTerrainPerlin()
 
 		terrain->setAllLayer(per_ter, LAYERTYPE_ROCK);
 
-		for(int j = 3; j<size/2; j++)
+		for(int j = 0; j<size; j++)
 		{
-			for(int i = 3; i<size/2; i++)
+			for(int i = 0; i<size; i++)
 			{
 				//terrain->setLayerHeight(i,j,LAYERTYPE_SAND,1-(i+j)/*/(size/4.)*/);
-				terrain->setLayerHeight(i,j,LAYERTYPE_SAND, 5);
+				//terrain->setLayerHeight(i,j,LAYERTYPE_SAND, 5);
+				double gauss = gauss_terrain(i, j, size)/5;
+				if(gauss > 1)
+				{
+					terrain->setLayerHeight(i-size/4,j,LAYERTYPE_WATER,gauss);
+					terrain->setLayerHeight(i+size/4,j,LAYERTYPE_WATER,gauss);
+				}
 			}
 		}
+		/*
 		for(int j = 3*size/8; j<(size/2)+3; j++)
 		{
 			for(int i = 3*size/8; i<(size/2)+3; i++)
 			{
-				//terrain->setLayerHeight(i,j,LAYERTYPE_WATER,1-(i+j)/*/(size/4.)*/);
+				//terrain->setLayerHeight(i,j,LAYERTYPE_WATER,1-(i+j));
 				terrain->setLayerHeight(i,j,LAYERTYPE_WATER,3);
 			}
 		}
+		*/
 	}
 }
 
@@ -88,8 +96,12 @@ void MainWindow::GenTerrainGaussian()
 			//initBruit2D(512, 512, 1, 10);
 			for(int i = 0; i<size; i++)
 			{
-				double gauss = gauss_terrain(i, j, size);
-				terrain->setLayerHeight(i, j, LAYERTYPE_ROCK, gauss);
+				double gauss = gauss_terrain(i, j, size/5);
+				terrain->setLayerHeight(i, j, LAYERTYPE_ROCK, 128-gauss/3);
+				if(abs(i-size/2) < 15 && abs(j-size/2) < 15)
+				{
+					terrain->setLayerHeight(i,j,LAYERTYPE_WATER,3);
+				}
 			}
 		}
 	}
@@ -126,7 +138,7 @@ void MainWindow::RenderTerrain()
 		int size = terrain->getSize();
 		mayaglWidget->clearWorld();
 		MayaGeometryAll mga = MayaGeometrySet(mg_terrain,MayaFrame::Id);
-		//mga.Append(mg_water);
+		mga.Append(mg_water);
 		mga.Translate(Vector(-size/2., -size/2., -128));
 		mayaglWidget->setWorld(mga);
 	}
@@ -162,7 +174,16 @@ void MainWindow::ExecuteToolTerWater()
 		for(int i=0; i<10; i++)
 		{
 			terrain->fhsIteration();
-			RenderTerrain();
+
+			MayaGeometry mg_terrain = terrain->toMG();
+			MayaGeometry mg_water = terrain->waterToMG();
+			//mg_terrain.setMaterialObject(mo);
+			int size = terrain->getSize();
+			MayaGeometryAll mga = MayaGeometrySet(mg_terrain,MayaFrame::Id);
+			mga.Append(mg_water);
+			mga.Translate(Vector(-size/2., -size/2., -128));
+			mayaglWidget->clearWorld();
+			mayaglWidget->setWorld(mga);
 		}
 	}
 }

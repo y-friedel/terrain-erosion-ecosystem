@@ -46,6 +46,7 @@ protected:
 	void fhsWaterFlow_PipeCell(int i, int j);
 	void fhsWaterFlow_Pipe();
 	void fhsWaterFlow_Move();
+	void fhsWaterFlow_Speed();
 
 public:
 	void fhsIteration();
