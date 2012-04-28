@@ -118,6 +118,11 @@ MayaGeometry Terrain::toMG() const
 {
 
 	//Creation de la liste de Vecteurs et couleurs associées
+	//couleurs
+	//(0,0,0)=Tex1
+	//(1,0,0)=Tex2
+	//(0,1,0)=Tex3
+	//(0,0,1)=Tex4
 	QVector<Vector> vec_point = QVector<Vector>();
 	QVector<Vector> vec_couleur = QVector<Vector>();
 	for(int j = 0; j<_size; j++)
@@ -126,17 +131,20 @@ MayaGeometry Terrain::toMG() const
 		{
 			if(getLastLayer(i, j) == LAYERTYPE_ROCK)
 			{
-				vec_couleur.append(Vector(0.3,0.3,0.3));
+				//vec_couleur.append(Vector(0.3,0.3,0.3));
+				vec_couleur.append(Vector(0,0,0));
 				vec_point.append(Vector(i, j, getHeight(i, j)));
 			}
 			if(getLastLayer(i, j) == LAYERTYPE_SAND)
 			{
-				vec_couleur.append(Vector(0.5,0.4,0.2));
+				//vec_couleur.append(Vector(0.5,0.4,0.2));
+				vec_couleur.append(Vector(0,1,0));
 				vec_point.append(Vector(i, j, getHeight(i, j)));
 			}
 			if(getLastLayer(i, j) == LAYERTYPE_WATER)
 			{
-				vec_couleur.append(Vector(0.3,0.3,0.3));
+				//vec_couleur.append(Vector(0.3,0.3,0.3));
+				vec_couleur.append(Vector(0,0,1));
 				vec_point.append(Vector(i, j, getHeightOnLayer(i, j, LAYERTYPE_SAND)));
 			}
 		}
@@ -207,9 +215,10 @@ MayaGeometry Terrain::toMG() const
 	}
 
 	//Création du MG
+
 	
 	//MaterialObject mo={ ShaderTextureUV, UVMapping, AColor(0.5,0.5,0.5,1.0), AColor(0.3,0.3,0.3,1.0), AColor(0.1,0.1,0.1,1.0), 50.,QString("Shaders\Tex1.bmp")};
-	MaterialObject mo={ ShaderPhongVertexColor, VertexColor, AColor(0.5,0.5,0.5,1.0), AColor(0.3,0.3,0.3,1.0), AColor(0.1,0.1,0.1,1.0), 50.,QString("Shaders\Tex1.bmp")};
+	MaterialObject mo={ ShaderTerrainTexture3D, VertexColor, AColor(0.5,0.5,0.5,1.0), AColor(0.3,0.3,0.3,1.0), AColor(0.1,0.1,0.1,1.0), 50., QString("")};
 	//MaterialObject mo={ ShaderPhongVertexColor, Wireframe, AColor(0.5,0.5,0.5,1.0), AColor(0.3,0.3,0.3,1.0), AColor(0.1,0.1,0.1,1.0), 50.,QString("")};
 
 	MayaGeometry m = MayaGeometry("mg_terrain", vec_point, vec_normale, vec_couleur, vec_tri_int, mo);
@@ -242,7 +251,13 @@ MayaGeometry Terrain::waterToMG() const
 			if(getLastLayer(i, j) == LAYERTYPE_WATER)
 			{
 				vec_couleur.append(Vector(0.4,0.5,0.8));
-				vec_point.append(Vector(i, j, getHeight(i, j)));
+				//vec_couleur.append(Vector(0,0,1));
+				if(getRelativeHeightOnLayer(i, j, LAYERTYPE_WATER) > 0.5)
+				{
+					vec_point.append(Vector(i, j, getHeight(i, j)));
+				}else{
+					vec_point.append(Vector(i, j, 0));
+				}
 			}
 		}
 
