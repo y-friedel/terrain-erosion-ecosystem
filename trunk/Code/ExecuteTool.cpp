@@ -51,23 +51,24 @@ void MainWindow::GenTerrainPerlin()
 
 		Perlin_d per_d = Perlin_d(size,24);
 		double* per_ter = per_d.generate();
-		per_ter = gaussianLand(per_ter, size);
-
+		gaussianLand(per_ter, size);
+		
 		terrain->setAllLayer(per_ter, LAYERTYPE_ROCK);
 
 		for(int j = 0; j<size; j++)
 		{
 			for(int i = 0; i<size; i++)
 			{
+				//terrain->setLayerHeight(i,j,LAYERTYPE_WATER,10);
 				//terrain->setLayerHeight(i,j,LAYERTYPE_SAND,1-(i+j)/*/(size/4.)*/);
 				//terrain->setLayerHeight(i,j,LAYERTYPE_SAND, 5);
-				
+				/*
 				double gauss = gauss_terrain(i, j, size)/3;
 				if(gauss > 1)
 				{
 					terrain->setLayerHeight(i-size/4,j,LAYERTYPE_WATER,gauss);
 					terrain->setLayerHeight(i+size/4,j,LAYERTYPE_WATER,gauss);
-				}
+				}*/
 			}
 		}
 		/*
@@ -97,11 +98,11 @@ void MainWindow::GenTerrainGaussian()
 			//initBruit2D(512, 512, 1, 10);
 			for(int i = 0; i<size; i++)
 			{
-				double gauss = gauss_terrain(i, j, size/5);
-				terrain->setLayerHeight(i, j, LAYERTYPE_ROCK, 128-gauss/3);
+				double gauss = gauss_terrain(i, j, size);
+				terrain->setLayerHeight(i, j, LAYERTYPE_ROCK, 128+gauss/4);
 				if(abs(i-size/2) < 15 && abs(j-size/2) < 15)
 				{
-					terrain->setLayerHeight(i,j,LAYERTYPE_WATER,3);
+					//terrain->setLayerHeight(i,j,LAYERTYPE_WATER,3);
 				}
 			}
 		}
@@ -172,11 +173,13 @@ void MainWindow::ExecuteToolTerWater()
 {
 	if(terrain != NULL)
 	{
+		const int nbIter = 100;
+
 		int center = terrain->getSize()/2;
-		for(int i=0; i<100; i++)
+		for(int i=0; i<nbIter; i++)
 		{
 			double wl = terrain->getRelativeHeightOnLayer(center,center,LAYERTYPE_WATER);
-			terrain->setLayerHeight(center,center,LAYERTYPE_WATER,wl+100);
+			terrain->jetDEau(center-64,center);
 
 			terrain->fhsIteration();
 
@@ -187,8 +190,14 @@ void MainWindow::ExecuteToolTerWater()
 			MayaGeometryAll mga = MayaGeometrySet(mg_terrain,MayaFrame::Id);
 			mga.Append(mg_water);
 			mga.Translate(Vector(-size/2., -size/2., -128));
-			mayaglWidget->clearWorld();
-			mayaglWidget->setWorld(mga);
+
+			if(i==nbIter-1)
+			{
+				mayaglWidget->clearWorld();
+				mayaglWidget->setWorld(mga);
+			}
+
+			std::cout << i << "/" << nbIter << std::endl;
 		}
 	}
 }

@@ -21,6 +21,8 @@ protected:
 	double* _waterLayer;
 	double* _waterPipe;
 	double* _waterVelocity;
+	double* _sediment;
+	double* _sedimentTmp;
 	int _size;
 	int _sizeArray;
 
@@ -47,9 +49,15 @@ protected:
 	void fhsWaterFlow_Pipe();
 	void fhsWaterFlow_Move();
 	void fhsWaterFlow_Speed();
+	void fhsRain();
+	void fhsEvaporation();
+	void fhsErosion();
+	void fhsTransport();
 
 public:
 	void fhsIteration();
+
+	void jetDEau(int i, int j);
 };
 
 #endif

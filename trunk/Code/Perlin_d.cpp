@@ -1,5 +1,11 @@
 #include "Perlin_d.h"
 
+#include <cstdlib>
+#include <cmath>
+#include <ctime>
+
+#define max(a,b) (a>=b?a:b)
+#define min(a,b) (a<=b?a:b)
 
 Layer::Layer()
 {
@@ -28,7 +34,7 @@ void Layer::random_v()
 	for (int j=0; j<size*size; j++)
 	{
 		/* generate secret number: */
-		v[j] = rand() % 255 + 1;
+		v[j] = 255.0*(double)rand()/(double)RAND_MAX;
 	}
 }
 
@@ -60,7 +66,7 @@ Perlin_d::~Perlin_d()
 //		return (double)y1;
 //}
 
-int interpolate(int y1, int y2, int n, int delta){
+double interpolate(double y1, double y2, double n, double delta){
 	if (n==0)
 	    return y1;
 	if (n==1)
@@ -74,7 +80,7 @@ int interpolate(int y1, int y2, int n, int delta){
 	return y1*v1 + y2*v2;
 }
 
-double compute_value(int i, int j, int frequence, Layer* l){
+double compute_value(int i, int j, double frequence, Layer* l){
 	/* déterminations des bornes */
 	int borne1x, borne1y, borne2x, borne2y, q;
 	float pas;
@@ -207,9 +213,9 @@ double* gaussianFilter(double* input, int size,  double sig)
 	return output;
 }
 
-double* gaussianLand(double* input, int size)
+void gaussianLand(double* input, int size)
 {
-	int sig;
+	int sig = 2;
 	int ks /*sig*3+1*/;
 	double level = 0;
 
@@ -223,20 +229,20 @@ double* gaussianLand(double* input, int size)
 		temp[j] = 0;
 	}
 
-
-	for(int j=0; j<size; j++)
-	{
-		for(int i=0; i<size; i++)
-		{
-			level=0;
-			if(input[i + size*j]>170)
+			/*if(input[i + size*j]>170)
 			{
 				sig = 1;
 			}else if (input[i + size*j]>85){
 				sig = 3;
 			}else{
 				sig = 5;
-			}
+			}*/
+
+	for(int j=0; j<size; j++)
+	{
+		for(int i=0; i<size; i++)
+		{
+			level=0;
 			ks = sig*3+1;
 			for(int x=-ks; x<=ks; x++)
 			{
@@ -255,27 +261,25 @@ double* gaussianLand(double* input, int size)
 		for(int i=0; i<size; i++)
 		{
 			level = 0;
-			if(input[i + size*j]>170)
-			{
-				sig = 1;
-			}else if (input[i + size*j]>85){
-				sig = 3;
-			}else{
-				sig = 5;
-			}
 			ks = sig*3+1;
 			for(int y=-ks; y<=ks; y++)
 			{
 				if(j+y >= 0 && j+y < size)
 				{
 					//r+= (getPixel(tmpImg, i, j+y)[0] * gaussianFunction(y, sig));
-					level+= (input[i + size*(j+y)] * gaussianFunction(y, sig));
+					level+= (temp[i + size*(j+y)] * gaussianFunction(y, sig));
 
 				}
-				output[i+ size*j] = (level + temp[i+ size*j])/2;
+				output[i+ size*j] = level;
 			}
 		}
 	}
 
-	return output;
+	for(int i=0; i<size*size; i++)
+	{
+		input[i] = output[i];
+	}
+
+	delete[] temp;
+	delete[] output;
 }
