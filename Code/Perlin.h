@@ -1,10 +1,6 @@
 #ifndef __PERLIN__
 #define __PERLIN__
 
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
-
 #include "Stuff.h"
 
 class Perlin {
