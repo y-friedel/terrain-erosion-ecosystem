@@ -49,9 +49,9 @@ void MainWindow::GenTerrainPerlin()
 
 /** PERLIN V2 ********************************************************************************/
 
-		Perlin_d per_d = Perlin_d(size,24);
+		Perlin_d per_d = Perlin_d(size,16);
 		double* per_ter = per_d.generate();
-		gaussianLand(per_ter, size);
+		gaussian2D(per_ter, size, 2);
 		
 		terrain->setAllLayer(per_ter, LAYERTYPE_ROCK);
 
@@ -173,7 +173,7 @@ void MainWindow::ExecuteToolTerWater()
 {
 	if(terrain != NULL)
 	{
-		const int nbIter = 100;
+		const int nbIter = 10;
 
 		int center = terrain->getSize()/2;
 		for(int i=0; i<nbIter; i++)
@@ -199,6 +199,7 @@ void MainWindow::ExecuteToolTerWater()
 
 			std::cout << i << "/" << nbIter << std::endl;
 		}
+		terrain->setGrowLayer();
 	}
 }
 
