@@ -11,7 +11,7 @@ Layer::Layer()
 {
 }
 
-Layer::Layer(int _size, float _p)
+Layer::Layer(int _size, double _p)
 {
 	size = _size;
 	v = new double[size*size];
@@ -30,10 +30,10 @@ Layer::~Layer()
 void Layer::random_v()
 {
 	/* initialize random seed: */
-	srand ( time(NULL) );
+	srand ( (unsigned int)time(NULL) );
 	for (int j=0; j<size*size; j++)
 	{
-		/* generate secret number: */
+		/* generate random number: */
 		v[j] = 255.0*(double)rand()/(double)RAND_MAX;
 	}
 }
@@ -42,7 +42,7 @@ Perlin_d::Perlin_d(int _size, int nb_layers)
 {
 	size = _size;
 	freq_init = 2;
-	l_random = new Layer(size, 1);
+	l_random = new Layer(131, 1);
 	l_random->random_v();
 	t_layer = std::vector<Layer*>();
 	double pers = 0.5;
@@ -72,7 +72,7 @@ double interpolate(double y1, double y2, double n, double delta){
 	if (n==1)
 	    return y2;
 	
-	float a = (float)delta/n;
+	float a = (float)(delta/n);
 	
 	float v1 = 3*pow(1-a, 2) - 2*pow(1-a,3);
 	float v2 = 3*pow(a, 2)   - 2*pow(a, 3);
@@ -80,35 +80,36 @@ double interpolate(double y1, double y2, double n, double delta){
 	return y1*v1 + y2*v2;
 }
 
-double compute_value(int i, int j, double frequence, Layer* l){
+double Perlin_d::compute_value(int i, int j, double frequence, Layer* l){
 	/* déterminations des bornes */
 	int borne1x, borne1y, borne2x, borne2y, q;
-	float pas;
-	pas = (float)l->size/frequence;
+	float pas = (float)((t_layer[0]->size)/frequence);
 
-	q = (float)i/pas;
-	borne1x = q*pas;
-	borne2x = (q+1)*pas;
+	q = (int)(i/pas);
+	borne1x = (int)(q*pas);
+	borne2x = (int)((q+1)*pas);
 
-	if(borne2x >= l->size) 
-		borne2x = l->size-1;
+	q = (int)(j/pas);
+	borne1y = (int)(q*pas);
+	borne2y = (int)((q+1)*pas);
 
-	q = (float)j/pas;
-	borne1y = q*pas;
-	borne2y = (q+1)*pas;
-
-	if(borne2y >= l->size) 
-		borne2y = l->size-1;
+	//std::cout << borne1x%l->size << " " << borne2x%l->size << " " << borne1y%l->size << " " << borne2y%l->size << std::endl;
 
 	/* récupérations des valeurs aléatoires aux bornes */
 	double b00,b01,b10,b11;
-	b00 = l->v[borne1x + l->size*borne1y];
-	b01 = l->v[borne1x + l->size*borne2y];
-	b10 = l->v[borne2x + l->size*borne1y];
-	b11 = l->v[borne2x + l->size*borne2y];
+	b00 = l->v[borne1x%l->size + l->size*(borne1y%l->size)];
+	b01 = l->v[borne1x%l->size + l->size*(borne2y%l->size)];
+	b10 = l->v[borne2x%l->size + l->size*(borne1y%l->size)];
+	b11 = l->v[borne2x%l->size + l->size*(borne2y%l->size)];
+
+	//std::cout << borne1x%l->size + l->size*borne1y%l->size << " " << borne1x%l->size + l->size*borne2y%l->size << std::endl;
+
+	//std::cout << b00 << " " << b01 << " " << b10 << " " << b11 << std::endl;
 
 	double v1  = interpolate(b00, b01, borne2y-borne1y, j-borne1y);
 	double v2  = interpolate(b10, b11, borne2y-borne1y, j-borne1y);
+
+
 	double fin = interpolate(v1, v2, borne2x-borne1x , i-borne1x);
 
 	return fin;
@@ -163,7 +164,7 @@ double gaussianFunction(double x, double sig)
 
 double* gaussianFilter(double* input, int size,  double sig)
 {
-	int ks = sig*3+1;
+	int ks = (int)sig*3+1;
 	double level = 0;
 
 	double* output = new double[size*size];
@@ -222,6 +223,8 @@ void gaussianLand(double* input, int size)
 	double* temp = new double[size*size];
 	double* output = new double[size*size];
 
+	int val_end = 0; //valeur pour adapter les bords du terrain a la gaussienne
+
 	//init
 	for(int j=0; j<size*size; j++)
 	{
@@ -246,11 +249,24 @@ void gaussianLand(double* input, int size)
 			ks = sig*3+1;
 			for(int x=-ks; x<=ks; x++)
 			{
-				if(i+x >= 0 && i+x < size)
+				if(i+x < 0)
 				{
-					//level+= (getPixel(inputImg, i+x, j)[0] * gaussianFunction(x, sig));
-					level+= (input[i+x + size*j] * gaussianFunction(x, sig));
+					val_end = abs(i+x);
 				}
+				else if(i+x > size)
+				{
+					val_end = size - (i+x-size);
+				}
+				else if (i+x == size)
+				{
+					val_end = size-1;
+				}
+				else
+				{
+					val_end = i+x;
+				}
+
+				level+= (input[val_end + size*j] * gaussianFunction(x, sig));
 			}
 			temp[i+ size*j] = level;
 		}
@@ -264,12 +280,21 @@ void gaussianLand(double* input, int size)
 			ks = sig*3+1;
 			for(int y=-ks; y<=ks; y++)
 			{
-				if(j+y >= 0 && j+y < size)
+				if(j+y > size)
 				{
-					//r+= (getPixel(tmpImg, i, j+y)[0] * gaussianFunction(y, sig));
-					level+= (temp[i + size*(j+y)] * gaussianFunction(y, sig));
-
+					val_end = size - (j+y-size);
 				}
+				else if(j+y < 0)
+				{
+					val_end = abs(j+y);
+				}
+				else if(j+y >= 0 && j+y < size)
+				{
+					val_end = j+y;
+				}
+
+				level+= (temp[i + size*(val_end)] * gaussianFunction(y, sig));
+
 				output[i+ size*j] = level;
 			}
 		}
