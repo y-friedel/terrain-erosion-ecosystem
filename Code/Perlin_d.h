@@ -10,11 +10,11 @@ class Layer
 public:
 	int size;
 	double *v;
-	float persistence;
+	double persistence;
 
 public:
 	Layer();
-	Layer(int _size, float _p);
+	Layer(int _size, double _p);
 	~Layer();
 
 	void random_v();
@@ -37,6 +37,7 @@ public:
 
 	void fill_layers();
 	double* generate();
+	double compute_value(int i, int j, double frequence, Layer* l);
 
 };
 
