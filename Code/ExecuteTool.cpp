@@ -1,6 +1,6 @@
 #include "qte.h"
 #include "Terrain.h"
-//#include "Perlin.h"
+#include "Foret.h"
 #include "Perlin_d.h"
 
 /*! 
