@@ -10,6 +10,7 @@ Terrain::Terrain(int size)
 	_bedRock = new double[_sizeArray];
 	_sandLayer = new double[_sizeArray];
 	_waterLayer = new double[_sizeArray];
+	_growLayer = new bool[_sizeArray];
 
 	//Hydrolic Erosion
 	_waterPipe = new double[_sizeArray*4];
@@ -22,6 +23,7 @@ Terrain::Terrain(int size)
 		_bedRock[i] = 0;
 		_sandLayer[i] = 0;
 		_waterLayer[i] = 0;
+		_growLayer[i] = false;
 		_sediment[i] = 0;
 
 		//Hydrolic Erosion
@@ -45,6 +47,8 @@ double Terrain::getHeight(int x, int y) const
 double Terrain::getHeightOnLayer(int x, int y, int layer) const
 {
 	int ind = y*_size + x;
+	if(ind < 0 || ind > _sizeArray) return -1;
+
 	double height = _bedRock[ind];
 	if(layer == LAYERTYPE_ROCK)
 	{
@@ -57,6 +61,10 @@ double Terrain::getHeightOnLayer(int x, int y, int layer) const
 	if(layer == LAYERTYPE_WATER)
 	{
 		return height + _sandLayer[ind] + _waterLayer[ind];
+	}
+	else
+	{
+		return -1;
 	}
 }
 
@@ -74,6 +82,10 @@ double Terrain::getRelativeHeightOnLayer(int x, int y, int layer) const
 	if(layer == LAYERTYPE_WATER)
 	{
 		return _waterLayer[ind];
+	}
+	else
+	{
+		return -1;
 	}
 }
 
@@ -130,13 +142,21 @@ MayaGeometry Terrain::toMG() const
 	//(0,0,1)=Tex4
 	QVector<Vector> vec_point = QVector<Vector>();
 	QVector<Vector> vec_couleur = QVector<Vector>();
+
 	for(int j = 0; j<_size; j++)
 	{
 		for(int i = 0; i<_size; i++)
 		{
 			if(getLastLayer(i, j) == LAYERTYPE_ROCK)
 			{
-				vec_couleur.append(Vector(0.3,0.3,0.3));
+				if(isVegHost(i, j))
+				{
+					vec_couleur.append(Vector(0.3,0.6,0.3));
+				}
+				else
+				{
+					vec_couleur.append(Vector(0.3,0.3,0.3));
+				}
 				//vec_couleur.append(Vector(0,0,0));
 				vec_point.append(Vector(i, j, getHeight(i, j)));
 			}
@@ -154,7 +174,14 @@ MayaGeometry Terrain::toMG() const
 				}
 				else
 				{
-					vec_couleur.append(Vector(0.3,0.3,0.3));
+					if(isVegHost(i, j))
+					{
+						vec_couleur.append(Vector(0.3,0.6,0.3));
+					}
+					else
+					{
+						vec_couleur.append(Vector(0.3,0.3,0.3));
+					}
 				}
 				//vec_couleur.append(Vector(0,0,1));
 				vec_point.append(Vector(i, j, getHeightOnLayer(i, j, LAYERTYPE_SAND)));
@@ -298,10 +325,6 @@ MayaGeometry Terrain::waterToMG() const
 
 			vec_tri_int.append(j*_size + _size + (i+1));
 			vec_tri_int.append(j*_size + _size + (i+1));
-
-			//m.AddTriangle(vec_point.value((j*size)+i), vec_point.value(j*size+ size +i), vec_point.value(j*size+size+i+1));
-			//m.AddTriangle(vec_point.value((j*size)+i), vec_point.value((j*size + size +(i+1))), vec_point.value(j*(size)+(i+1)));
-
 		}
 	}
 
@@ -312,7 +335,6 @@ MayaGeometry Terrain::waterToMG() const
 
 	for(int j = 0; j<vec_tri_int.size(); j+=6)
 	{
-		//std::cout << "OP " << vec_tri_int.value(j) << " " << vec_tri_int.value(j+2) << " " << vec_tri_int.value(j+4) << std::endl;
 		
 		double x1 = vec_point.value(vec_tri_int.value(j))[0];
 		double y1 = vec_point.value(vec_tri_int.value(j))[1];
@@ -664,7 +686,7 @@ void Terrain::fhsTransport()
 
 void Terrain::fhsIteration()
 {
-	//fhsRain();
+	fhsRain();
 	fhsWaterFlow_Pipe();
 	fhsWaterFlow_Speed();
 	fhsWaterFlow_Move();
@@ -678,4 +700,83 @@ void Terrain::jetDEau(int i, int j)
 {
 	setLayerHeight(i, j ,LAYERTYPE_WATER,100);
 	//_waterVelocity[(j*_size+i)*2+0] = 10.0;
+}
+
+//Vegetation data
+void Terrain::setGrowLayer()
+{
+	//Calcul du niveau d'eau
+	double* waterPart = new double[_sizeArray];
+	double water_cell = 0;
+	for(int i = 0; i < _sizeArray; i++)
+	{
+		water_cell = _waterLayer[i];
+		waterPart[i] = _waterLayer[i];
+		_growLayer[i] = false;
+	}
+
+	//Flou simulant l'infiltration
+	gaussian2D(waterPart, _size, 5);
+
+	//Calcul des pentes
+	int p00, p01, p10, p11;
+
+	for(int j=0; j<_size; j++)
+	{
+		for(int i=0; i<_size; i++)
+		{
+			p00= getHeightOnLayer(i-1, j, LAYERTYPE_ROCK);
+			p01= getHeightOnLayer(i+1, j, LAYERTYPE_ROCK);
+			p10= getHeightOnLayer(i, j-1, LAYERTYPE_ROCK);
+			p11= getHeightOnLayer(i, j+1, LAYERTYPE_ROCK);
+			_growLayer[i + _size*j] = 
+					waterPart[i + _size*j] > 0 
+				&& _waterLayer[i + _size*j] <= 0.1
+				&& max(max(p00, p01), max(p10, p11)) - min(min(p00, p01), min(p10, p11)) < 2
+				;
+				
+			//std::cout << _growLayer[i + _size*j] << " ";
+		}
+		//std::cout << endl;
+	}
+	
+
+	//Affinage
+	int compteur;
+	bool redo = true;
+	std::cout << "OKOKOKOKOKOKOKOK" << endl;
+	while(redo)
+	{
+		redo = false;
+		for(int j=1; j<_size-1; j++)
+		{
+			for(int i=1; i<_size-1; i++)
+			{
+				compteur = 0;
+				if(_growLayer[i+1 + _size*j] || _waterLayer[i+1 + _size*j] >= 0.1) compteur ++;
+				if(_growLayer[i-1 + _size*j] || _waterLayer[i-1 + _size*j] >= 0.1) compteur ++;
+				if(_growLayer[i + _size*(j+1)] || _waterLayer[i + _size*(j+1)] >= 0.1) compteur ++;
+				if(_growLayer[i + _size*(j-1)] || _waterLayer[i + _size*(j-1)] >= 0.1) compteur ++;
+				//std::cout << compteur << std::endl;
+				if(compteur <2 && _growLayer[i + _size*j] && _growLayer[i + _size*j])
+				{
+					//std::cout << "clean" << std::endl;
+					_growLayer[i + _size*j] = false;
+					redo = true;
+				}
+				if(compteur >2 && !_growLayer[i + _size*j])
+				{
+					_growLayer[i + _size*j] = true;
+					redo = true;
+				}
+
+			}
+		}
+	}
+
+}
+
+bool Terrain::isVegHost(int x, int y) const
+{
+	return _growLayer[x+ _size*y];
 }

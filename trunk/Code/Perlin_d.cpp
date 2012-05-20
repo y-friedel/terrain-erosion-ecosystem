@@ -56,15 +56,12 @@ Perlin_d::Perlin_d(int _size, int nb_layers)
 
 Perlin_d::~Perlin_d()
 {
-
+	delete l_random;
+	for(int i=0; i<t_layer.size(); i++)
+	{
+		delete t_layer[i];
+	}
 }
-
-//double interpolate(int y1, int y2, int n, int delta){
-//	if (n!=0)
-//		return (double)y1+delta*(y2-y1)/n;
-//	else
-//		return (double)y1;
-//}
 
 double interpolate(double y1, double y2, double n, double delta){
 	if (n==0)
@@ -154,157 +151,4 @@ double* Perlin_d::generate()
 
 	return result;
 
-}
-
-double gaussianFunction(double x, double sig)
-{
-	return exp((-(x*x)/(2.*sig*sig)))/(sig*sqrt(2.*3.14159265));
-}
-
-
-double* gaussianFilter(double* input, int size,  double sig)
-{
-	int ks = (int)sig*3+1;
-	double level = 0;
-
-	double* output = new double[size*size];
-
-	//init
-	for(int j=0; j<size*size; j++)
-	{
-		output[j] = 0;
-	}
-
-
-	for(int j=0; j<size; j++)
-	{
-		for(int i=0; i<size; i++)
-		{
-			level=0;
-			for(int x=-ks; x<=ks; x++)
-			{
-				if(i+x >= 0 && i+x < size)
-				{
-					//level+= (getPixel(inputImg, i+x, j)[0] * gaussianFunction(x, sig));
-					level+= (input[i+x + size*j] * gaussianFunction(x, sig));
-				}
-			}
-			output[i+ size*j] = level;
-		}
-	}
-
-	for(int j=0; j<size; j++)
-	{
-		for(int i=0; i<size; i++)
-		{
-			level = 0;
-			for(int y=-ks; y<=ks; y++)
-			{
-				if(j+y >= 0 && j+y < size)
-				{
-					//r+= (getPixel(tmpImg, i, j+y)[0] * gaussianFunction(y, sig));
-					level+= (input[i + size*(j+y)] * gaussianFunction(y, sig));
-
-				}
-				output[i+ size*j] = level;
-			}
-		}
-	}
-
-	return output;
-}
-
-void gaussianLand(double* input, int size)
-{
-	int sig = 2;
-	int ks /*sig*3+1*/;
-	double level = 0;
-
-	double* temp = new double[size*size];
-	double* output = new double[size*size];
-
-	int val_end = 0; //valeur pour adapter les bords du terrain a la gaussienne
-
-	//init
-	for(int j=0; j<size*size; j++)
-	{
-		output[j] = 0;
-		temp[j] = 0;
-	}
-
-			/*if(input[i + size*j]>170)
-			{
-				sig = 1;
-			}else if (input[i + size*j]>85){
-				sig = 3;
-			}else{
-				sig = 5;
-			}*/
-
-	for(int j=0; j<size; j++)
-	{
-		for(int i=0; i<size; i++)
-		{
-			level=0;
-			ks = sig*3+1;
-			for(int x=-ks; x<=ks; x++)
-			{
-				if(i+x < 0)
-				{
-					val_end = abs(i+x);
-				}
-				else if(i+x > size)
-				{
-					val_end = size - (i+x-size);
-				}
-				else if (i+x == size)
-				{
-					val_end = size-1;
-				}
-				else
-				{
-					val_end = i+x;
-				}
-
-				level+= (input[val_end + size*j] * gaussianFunction(x, sig));
-			}
-			temp[i+ size*j] = level;
-		}
-	}
-
-	for(int j=0; j<size; j++)
-	{
-		for(int i=0; i<size; i++)
-		{
-			level = 0;
-			ks = sig*3+1;
-			for(int y=-ks; y<=ks; y++)
-			{
-				if(j+y > size)
-				{
-					val_end = size - (j+y-size);
-				}
-				else if(j+y < 0)
-				{
-					val_end = abs(j+y);
-				}
-				else if(j+y >= 0 && j+y < size)
-				{
-					val_end = j+y;
-				}
-
-				level+= (temp[i + size*(val_end)] * gaussianFunction(y, sig));
-
-				output[i+ size*j] = level;
-			}
-		}
-	}
-
-	for(int i=0; i<size*size; i++)
-	{
-		input[i] = output[i];
-	}
-
-	delete[] temp;
-	delete[] output;
 }

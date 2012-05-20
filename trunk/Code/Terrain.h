@@ -19,6 +19,7 @@ protected:
 	double* _bedRock;
 	double* _sandLayer;
 	double* _waterLayer;
+	bool* _growLayer;
 	double* _waterPipe;
 	double* _waterVelocity;
 	double* _sediment;
@@ -32,6 +33,11 @@ public:
 	double getHeightOnLayer(int x, int y, int layer) const;
 	double getRelativeHeightOnLayer(int x, int y, int layer) const;
 	int getLastLayer(int x, int y) const;
+
+	//Vegetation
+	void setGrowLayer();
+	bool isVegHost(int x, int y) const;
+
 	int getSize()
 {
 	return _size;

@@ -40,7 +40,3 @@ public:
 	double compute_value(int i, int j, double frequence, Layer* l);
 
 };
-
-double gaussianFunction(double x, double sig);
-double* gaussianFilter(double* input, int size,  double sig);
-void gaussianLand(double* input, int size);
