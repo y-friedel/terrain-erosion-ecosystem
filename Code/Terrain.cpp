@@ -7,6 +7,9 @@ Terrain::Terrain(int size)
 	_size = size;
 	_sizeArray = _size*_size;
 
+	_terrainSize = 20.0;
+	_rainLevel = 200.0;
+
 	_bedRock = new double[_sizeArray];
 	_sandLayer = new double[_sizeArray];
 	_waterLayer = new double[_sizeArray];
@@ -131,6 +134,15 @@ void Terrain::setAllLayer(double* height_map, int layer)
 	}
 }
 
+Vector Terrain::getTerrainPoint(int i, int j, double h) const
+{
+	return Vector(
+		_terrainSize/2.0 - _terrainSize * (double)i/(double)(_size-1),
+		_terrainSize/2.0 - _terrainSize * (double)j/(double)(_size-1),
+		h * (double)_terrainSize/512.0
+		);
+}
+
 MayaGeometry Terrain::toMG() const
 {
 
@@ -158,13 +170,13 @@ MayaGeometry Terrain::toMG() const
 					vec_couleur.append(Vector(0.3,0.3,0.3));
 				}
 				//vec_couleur.append(Vector(0,0,0));
-				vec_point.append(Vector(i, j, getHeight(i, j)));
+				vec_point.append(getTerrainPoint(i, j, getHeight(i, j)));
 			}
 			if(getLastLayer(i, j) == LAYERTYPE_SAND)
 			{
 				vec_couleur.append(Vector(0.5,0.4,0.2));
 				//vec_couleur.append(Vector(0,1,0));
-				vec_point.append(Vector(i, j, getHeight(i, j)));
+				vec_point.append(getTerrainPoint(i, j, getHeight(i, j)));
 			}
 			if(getLastLayer(i, j) == LAYERTYPE_WATER)
 			{
@@ -184,7 +196,7 @@ MayaGeometry Terrain::toMG() const
 					}
 				}
 				//vec_couleur.append(Vector(0,0,1));
-				vec_point.append(Vector(i, j, getHeightOnLayer(i, j, LAYERTYPE_SAND)));
+				vec_point.append(getTerrainPoint(i, j, getHeightOnLayer(i, j, LAYERTYPE_SAND)));
 			}
 		}
 
@@ -280,12 +292,12 @@ MayaGeometry Terrain::waterToMG() const
 			if(getLastLayer(i, j) == LAYERTYPE_ROCK)
 			{
 				vec_couleur.append(Vector());
-				vec_point.append(Vector(i, j, 0));
+				vec_point.append(getTerrainPoint(i, j, 0));
 			}
 			if(getLastLayer(i, j) == LAYERTYPE_SAND)
 			{
 				vec_couleur.append(Vector());
-				vec_point.append(Vector(i, j, 0));
+				vec_point.append(getTerrainPoint(i, j, 0));
 			}
 			if(getLastLayer(i, j) == LAYERTYPE_WATER)
 			{
@@ -293,9 +305,9 @@ MayaGeometry Terrain::waterToMG() const
 				//vec_couleur.append(Vector(0,0,1));
 				if(getRelativeHeightOnLayer(i, j, LAYERTYPE_WATER) > 0.1)
 				{
-					vec_point.append(Vector(i, j, getHeight(i, j)));
+					vec_point.append(getTerrainPoint(i, j, getHeight(i, j)));
 				}else{
-					vec_point.append(Vector(i, j, 0));
+					vec_point.append(getTerrainPoint(i, j, 0));
 				}
 			}
 		}
@@ -377,7 +389,7 @@ MayaGeometry Terrain::waterToMG() const
 
 void Terrain::fhsWaterFlow_PipeCell(int i, int j)
 {
-	const double dt = 0.00003;
+	const double dt = 5e-7;
 	const double g = 9.809; //Gravity on Paris
 	const double A = 2.5;
 	const double l = 1./0.01;
@@ -574,8 +586,11 @@ void Terrain::fhsRain()
 	{
 		for(int i=0; i<_size; i++)
 		{
-			double d = getRelativeHeightOnLayer(i, j, LAYERTYPE_WATER);
-			setLayerHeight(i, j, LAYERTYPE_WATER, d+0.1);
+			if(getHeight(i, j) > _rainLevel)
+			{
+				double d = getRelativeHeightOnLayer(i, j, LAYERTYPE_WATER);
+				setLayerHeight(i, j, LAYERTYPE_WATER, d+ 2e-4);
+			}
 		}
 	}
 }
@@ -586,8 +601,8 @@ void Terrain::fhsEvaporation()
 	{
 		for(int i=0; i<_size; i++)
 		{
-			double d = getRelativeHeightOnLayer(i, j, LAYERTYPE_WATER);
-			setLayerHeight(i, j, LAYERTYPE_WATER, max(d-0.1, 0.0));
+			//double d = getRelativeHeightOnLayer(i, j, LAYERTYPE_WATER);
+			//setLayerHeight(i, j, LAYERTYPE_WATER, max(d- 5e-5, 0.0));
 		}
 	}
 }
@@ -630,10 +645,10 @@ void Terrain::fhsErosion()
 				dhY += getHeightOnLayer(i, j-1, LAYERTYPE_ROCK);
 			}
 
-			double tilt = sqrt(dhX*dhX+dhY*dhY)*sqrt(pow(_waterVelocity[ind*2+0], 2) + pow(_waterVelocity[ind*2+1], 2))*0.1;
+			double tilt = sqrt(dhX*dhX+dhY*dhY)*sqrt(pow(_waterVelocity[ind*2+0], 2) + pow(_waterVelocity[ind*2+1], 2))*0.03;
 			
 
-			if(tilt < 0.1)
+			if(tilt < 0.0001)
 			{
 				setLayerHeight(i, j, LAYERTYPE_ROCK, d+_sediment[ind]*0.5);
 				_sediment[ind] *= 0.5;
@@ -699,7 +714,7 @@ void Terrain::fhsIteration()
 void Terrain::jetDEau(int i, int j)
 {
 	setLayerHeight(i, j ,LAYERTYPE_WATER,100);
-	//_waterVelocity[(j*_size+i)*2+0] = 10.0;
+	_waterVelocity[(j*_size+i)*2+0] = 10.0;
 }
 
 //Vegetation data

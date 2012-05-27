@@ -24,6 +24,8 @@ protected:
 	double* _waterVelocity;
 	double* _sediment;
 	double* _sedimentTmp;
+	double _terrainSize;
+	double _rainLevel;
 	int _size;
 	int _sizeArray;
 
@@ -44,6 +46,8 @@ public:
 }
 	void setAllLayer(double* height_map, int layer);
 	void setLayerHeight(int x, int y, int layer, double height);
+
+	Vector getTerrainPoint(int i, int j, double h) const;
 
 	MayaGeometry toMG() const;
 	MayaGeometry noWaterToMG() const;
