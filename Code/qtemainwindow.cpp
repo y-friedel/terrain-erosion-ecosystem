@@ -40,6 +40,7 @@ void MainWindow::createActions()
 	connect(interfaceMainWindow.Objects_pushButton_terGenPerlin, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerGenPerlin()));
 	connect(interfaceMainWindow.Objects_pushButton_terRender, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerRender()));
 	connect(interfaceMainWindow.Objects_pushButton_terWater, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerWater()));
+	connect(interfaceMainWindow.Objects_pushButton_genVeget, SIGNAL( clicked() ), this, SLOT(ExecuteToolGenVeget()));
 
 	// Connection des boutons
 	/*
