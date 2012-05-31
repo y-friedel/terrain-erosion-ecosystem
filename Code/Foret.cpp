@@ -217,10 +217,15 @@ MayaGeometrySet Foret::foretToMGS(Terrain* ter)
 	std::cout << "TO MGS" << std::endl;
 	MayaGeometry mg = MayaGeometry("foret");
 
+	MaterialObject mo={ ShaderPhong, None, AColor(0.3,0.6,0.3,1.0), AColor(0.5,0.4,0.2,1.0), AColor(0.1,0.1,0.1,1.0), 50.,QString("")};
+	MaterialObject mo_tronc={ ShaderPhong, None, AColor(0.3,0.3,0.,1.0), AColor(0.5,0.4,0.2,1.0), AColor(0.1,0.1,0.1,1.0), 50.,QString("")};
+
 	//Fabrication du MG arbre
 	MayaGeometry mg_tree=MayaGeometry::CreateCone(Vector(0,0,.3),Vector(0,0,2), 0.3,50);
 	mg_tree.setName("tree");
+	mg_tree.setMaterialObject(mo);
 	MayaGeometry mg_tronc=MayaGeometry::CreateCylinder(Vector(0,0,0),Vector(0,0,.3), 0.1,50);
+	mg_tronc.setMaterialObject(mo_tronc);
 	mg_tree.Merge(mg_tronc);
 
 	MayaGeometrySet mgs = MayaGeometrySet(mg_tree,MayaFrame::Id);
