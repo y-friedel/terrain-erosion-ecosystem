@@ -3,6 +3,7 @@
 #include "maya.h"
 #include "Terrain.h"
 
+
 class Arbre
 {
 private:
@@ -43,9 +44,10 @@ public:
 	void addArbre(Arbre a);
 	void killArbre(int i);
 	Arbre getArbre(int i);
+	void allGrow();
 	
 	void fillTerrain(Terrain* ter, int nb_arbres, int type);
-	MayaGeometrySet ForetToMGS(Terrain* ter);
+	MayaGeometrySet foretToMGS(Terrain* ter);
 };
 
 #endif

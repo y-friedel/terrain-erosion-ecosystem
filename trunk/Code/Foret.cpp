@@ -41,7 +41,7 @@ double Arbre::getRadius() const
 
 bool Arbre::isInRadius(Arbre a)
 {
-	return( pow((x-a.getX()), 2) + pow((y-a.getY()),2) < a.getRadius() );
+	return( pow((x-a.getX()), 2) + pow((y-a.getY()),2) < a.getRadius()*10 );
 }
 
 void Arbre::setAge(int age)
@@ -59,7 +59,7 @@ bool Arbre::lifeProba(double proba)
 
 	/* proba entre 0 et 1 */
 	srand ( (unsigned int)time(NULL) );
-	return (proba > (double)rand()/(double)RAND_MAX);
+	return ((double)rand()/(double)RAND_MAX < proba);
 
 }
 
@@ -68,9 +68,12 @@ bool Arbre::grow()
 	if(_age < 100)
 	{
 		_age ++;
-		_taille += 0.1;
+		if(_taille <0.1)
+		{
+			_taille += 0.01;
+		}
 		_radius = _taille;
-		return true;
+		return lifeProba(0.99);
 	}
 	return false;
 }
@@ -95,6 +98,42 @@ Arbre Foret::getArbre(int i)
 	return _arbres[i];
 }
 
+void Foret::allGrow()
+{
+	int k = 0;
+	for(int i=0; i<_arbres.size(); i++)
+	{
+		//Si l'arbre est mort dans son developpement, on le retire de la liste
+		if(!_arbres[i].grow())
+		{
+			_arbres.remove(i);	
+		}
+		else
+		{
+			//On parcours tous les arbres suivants dans la liste
+			for(int j=i+1; j<_arbres.size(); j++)
+			{
+				//Si deux arbres sont trop proches
+				if(_arbres[i].isInRadius(_arbres[j]))
+				{
+					k++;
+					//On lance une proba pour savoir quel arbre partira
+					if(_arbres[i].lifeProba(0.50))
+					{
+						_arbres.remove(j);
+					}
+					else
+					{
+						_arbres.remove(i);
+						j = _arbres.size();
+					}
+				}
+			}
+		}
+	}
+	std::cout << "nb de collision : " << k << std::endl;
+}
+
 void Foret::fillTerrain(Terrain* ter, int nb_arbres, int type)
 {
 	int i = 0;
@@ -112,7 +151,7 @@ void Foret::fillTerrain(Terrain* ter, int nb_arbres, int type)
 
 			srand((unsigned int)time(NULL));
 	std::cout << "REMPLISSAGE TERRAIN :" << std::endl;
-	while(i < nb_arbres || delay == 20000)
+	while(i < nb_arbres && delay != nb_arbres*nb_arbres)
 	{
 		delay++;
 		do
@@ -155,7 +194,7 @@ void Foret::fillTerrain(Terrain* ter, int nb_arbres, int type)
 
 		if(ajout)
 		{
-			_arbres.append(Arbre(x_arbre, y_arbre, 1, 0.1));
+			_arbres.append(Arbre(x_arbre, y_arbre, 1, 0.01));
 			if(i%(int)(nb_arbres/100) == 0)
 			{
 				std::cout << "." ;
@@ -173,7 +212,7 @@ void Foret::fillTerrain(Terrain* ter, int nb_arbres, int type)
 
 }
 
-MayaGeometrySet Foret::ForetToMGS(Terrain* ter)
+MayaGeometrySet Foret::foretToMGS(Terrain* ter)
 {
 	std::cout << "TO MGS" << std::endl;
 	MayaGeometry mg = MayaGeometry("foret");

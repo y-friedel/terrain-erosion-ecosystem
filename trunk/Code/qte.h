@@ -7,6 +7,7 @@
 #include "camera.h" 
 #include "plane.h"
 #include "Terrain.h"
+#include "Foret.h"
 
 
 class MainWindow : public QMainWindow
@@ -34,6 +35,8 @@ private:
 
   //PROJECT TERRAIN
   Terrain* terrain;
+  //PROJECT VEGET
+  Foret* foret;
 
 protected:
 	void GenTerrainFlat();
@@ -43,6 +46,7 @@ protected:
 	
 	//Yo
 	void GenVeget();
+	void GrowVeget();
 
 
   public slots:
@@ -57,7 +61,10 @@ protected:
     void ExecuteToolTerGenPerlin();
 	void ExecuteToolTerRender();
 	void ExecuteToolTerWater();
+
+	//Veget
 	void ExecuteToolGenVeget();
+	void ExecuteToolGrowVeget();
 
 
 	/*
