@@ -2,17 +2,17 @@
 #include "cmath"
 #include <time.h>
 
-Arbre::Arbre() : x(0), y(0), _age(0), _taille(0), _radius(0)
+Arbre::Arbre() : x(0), y(0), _age(0), _taille(0), _radius(0), _treeType(TREETYPE_SAPIN)
 {
 
 }
 
-Arbre::Arbre(double _x, double _y) : x(_x), y(_y), _age(0), _taille(0), _radius(0)
+Arbre::Arbre(double _x, double _y) : x(_x), y(_y), _age(0), _taille(0), _radius(0), _treeType(TREETYPE_SAPIN)
 {
 
 }
 
-Arbre::Arbre(double _x, double _y, int age, double taille) : x(_x), y(_y), _age(age), _taille(taille), _radius(taille)
+Arbre::Arbre(double _x, double _y, int age, double taille) : x(_x), y(_y), _age(age), _taille(taille), _radius(taille), _treeType(TREETYPE_SAPIN)
 {
 
 }
@@ -41,7 +41,7 @@ double Arbre::getRadius() const
 
 bool Arbre::isInRadius(Arbre a)
 {
-	return( pow((x-a.getX()), 2) + pow((y-a.getY()),2) < a.getRadius()*10 );
+	return( pow((x-a.getX()), 2) + pow((y-a.getY()),2)+0.1 < a.getRadius()*10 );
 }
 
 void Arbre::setAge(int age)
@@ -65,7 +65,7 @@ bool Arbre::lifeProba(double proba)
 
 bool Arbre::grow()
 {
-	if(_age < 100)
+	if(_age < 50)
 	{
 		_age ++;
 		if(_taille <0.1)
@@ -77,6 +77,39 @@ bool Arbre::grow()
 	}
 	return false;
 }
+
+//Pommier
+
+Pommier::Pommier(double _x, double _y, double taille)
+{
+	x = _x;
+	y = _y;
+	_taille = taille;
+	_radius = taille;
+	_treeType = TREETYPE_POMMIER;
+	if(taille >= 0.1)
+	{
+		_age = 10;
+	}else{
+		_age = (int)(100*taille);
+	}
+}
+
+bool Pommier::grow()
+{
+	if(_age < 30)
+	{
+		_age ++;
+		if(_taille <0.1)
+		{
+			_taille += 0.01;
+		}
+		_radius = _taille;
+		return lifeProba(0.95);
+	}
+	return false;
+}
+
 
 Foret::Foret()
 {
@@ -139,17 +172,19 @@ void Foret::fillTerrain(Terrain* ter, int nb_arbres, int type)
 	int i = 0;
 	double x_arbre;
 	double y_arbre;
+	double age;
 	bool ajout = false;
 	int retrait;
 	int delay=0;
 
 	//Ajout du premier arbre
 	srand((unsigned int)time(NULL));
+
 	x_arbre = ((double)rand()/(double)RAND_MAX)*(ter->getSize()-1);
 	y_arbre = ((double)rand()/(double)RAND_MAX)*(ter->getSize()-1);
-	_arbres.append(Arbre(x_arbre, y_arbre));
+	age = ((double)rand()/(double)RAND_MAX)*10;
+	_arbres.append(Arbre(x_arbre, y_arbre, (int)age, age/100));
 
-			srand((unsigned int)time(NULL));
 	std::cout << "REMPLISSAGE TERRAIN :" << std::endl;
 	while(i < nb_arbres && delay != nb_arbres*nb_arbres)
 	{
@@ -158,6 +193,8 @@ void Foret::fillTerrain(Terrain* ter, int nb_arbres, int type)
 		{
 		x_arbre = ((double)rand()/(double)RAND_MAX)*(ter->getSize()-1);
 		y_arbre = ((double)rand()/(double)RAND_MAX)*(ter->getSize()-1);
+		age = ((double)rand()/(double)RAND_MAX)*10;
+
 		}
 		while(!ter->isVegHost((int)x_arbre, (int)y_arbre));
 
@@ -194,7 +231,14 @@ void Foret::fillTerrain(Terrain* ter, int nb_arbres, int type)
 
 		if(ajout)
 		{
-			_arbres.append(Arbre(x_arbre, y_arbre, 1, 0.01));
+			if(i%2 ==0)
+			{
+				_arbres.append(Arbre(x_arbre, y_arbre, (int)age, age/100));
+			}else{
+				_arbres.append(Pommier(x_arbre, y_arbre, age/100));
+				//std::cout << "FORT EN POMME : " << Pommier(0,0,0).getTreeType() << std::endl;
+				//std::cout << "FORT EN SAPIN : " << Arbre().getTreeType() << std::endl;
+			}
 			if(i%(int)(nb_arbres/100) == 0)
 			{
 				std::cout << "." ;
@@ -212,27 +256,35 @@ void Foret::fillTerrain(Terrain* ter, int nb_arbres, int type)
 
 }
 
-MayaGeometrySet Foret::foretToMGS(Terrain* ter)
+void Foret::foretToMGS(Terrain* ter, QVector<MayaGeometrySet>& vec_mgs)
 {
 	std::cout << "TO MGS" << std::endl;
 	MayaGeometry mg = MayaGeometry("foret");
 
 	MaterialObject mo={ ShaderPhong, None, AColor(0.3,0.6,0.3,1.0), AColor(0.5,0.4,0.2,1.0), AColor(0.1,0.1,0.1,1.0), 50.,QString("")};
+	MaterialObject mo_sombre={ ShaderPhong, None, AColor(0.2,0.4,0.2,1.0), AColor(0.5,0.4,0.2,1.0), AColor(0.1,0.1,0.1,1.0), 50.,QString("")};
 	MaterialObject mo_tronc={ ShaderPhong, None, AColor(0.3,0.3,0.,1.0), AColor(0.5,0.4,0.2,1.0), AColor(0.1,0.1,0.1,1.0), 50.,QString("")};
 
-	//Fabrication du MG arbre
-	MayaGeometry mg_tree=MayaGeometry::CreateCone(Vector(0,0,.3),Vector(0,0,2), 0.3,50);
-	mg_tree.setName("tree");
-	mg_tree.setMaterialObject(mo);
+	//Fabrication du MG arbre : sapin
+	MayaGeometry mg_sapin=MayaGeometry::CreateCone(Vector(0,0,.3),Vector(0,0,2), 0.3,50);
+	mg_sapin.setName("sapin");
+	mg_sapin.setMaterialObject(mo_sombre);
 	MayaGeometry mg_tronc=MayaGeometry::CreateCylinder(Vector(0,0,0),Vector(0,0,.3), 0.1,50);
 	mg_tronc.setMaterialObject(mo_tronc);
-	mg_tree.Merge(mg_tronc);
+	mg_sapin.Merge(mg_tronc);
 
-	MayaGeometrySet mgs = MayaGeometrySet(mg_tree,MayaFrame::Id);
+	//Fabrication du MG arbre : pommier
+	MayaGeometry mg_pommier=MayaGeometry::CreateSphere(Vector(0,0,0.6), 0.45, 10.);
+	mg_pommier.setName("pommier");
+	mg_pommier.setMaterialObject(mo);
+	mg_tronc.setMaterialObject(mo_tronc);
+	mg_pommier.Merge(mg_tronc);
+
+	MayaGeometrySet mgs_pommier = MayaGeometrySet(mg_pommier);
+	MayaGeometrySet mgs_sapin = MayaGeometrySet(mg_sapin);
 
 	Vector posTree = Vector(0.);
 	Vector scaleTree = Vector(1);
-	int bla = 0;
 	std::cout << _arbres.size() << std::endl;
 	
 	for(int j = 0; j < _arbres.size() ; j++)
@@ -241,10 +293,16 @@ MayaGeometrySet Foret::foretToMGS(Terrain* ter)
 		Vector convertSize = ter->getTerrainPoint(_arbres[j].getX(), _arbres[j].getY(), ter->getHeight((int)_arbres[j].getX(), (int)_arbres[j].getY()) );
 		Vector posTree = Vector(convertSize[0], convertSize[1], convertSize[2]-0.01);
 		MayaFrame frame(Matrix::Identity, posTree, scaleTree);
-		mgs.Append(frame);
+		if(_arbres[j].getTreeType() == TREETYPE_POMMIER)
+		{
+			mgs_pommier.Append(frame);
+		}else{
+			mgs_sapin.Append(frame);
+		}
 	}
 
-	return mgs;
+	vec_mgs.append(mgs_pommier);
+	vec_mgs.append(mgs_sapin);
 
 
 }

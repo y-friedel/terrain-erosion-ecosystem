@@ -163,9 +163,14 @@ void MainWindow::GenVeget()
 		//Creation de la couche foret
 		foret = new Foret();
 		foret->fillTerrain(terrain, 10000, 0);
-		MayaGeometrySet mgs = foret->foretToMGS(terrain);
+
+		QVector<MayaGeometrySet> vec_mgs;
+		foret->foretToMGS(terrain, vec_mgs);
 		
-		mga.Append(mgs);
+		for(int i=0; i< vec_mgs.size(); i++)
+		{
+			mga.Append(vec_mgs[i]);
+		}
 
 		mayaglWidget->clearWorld();
 		mayaglWidget->setWorld(mga);
@@ -180,10 +185,19 @@ void MainWindow::GrowVeget()
 		MayaGeometry mg_water = terrain->waterToMG();
 		MayaGeometryAll mga = MayaGeometrySet(mg_terrain,MayaFrame::Id);
 		mga.Append(mg_water);
+		
+		for(int i = 0; i<1; i++)
+		{
+			foret->allGrow();
+			std::cout << i << "/1" << std::endl; 
+		}
 
-		foret->allGrow();
-
-		mga.Append(foret->foretToMGS(terrain));
+		QVector<MayaGeometrySet> vec_mgs;
+		foret->foretToMGS(terrain, vec_mgs);
+		for(int i=0; i< vec_mgs.size(); i++)
+		{
+			mga.Append(vec_mgs[i]);
+		}
 
 		mayaglWidget->clearWorld();
 		mayaglWidget->setWorld(mga);

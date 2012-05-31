@@ -3,15 +3,23 @@
 #include "maya.h"
 #include "Terrain.h"
 
+enum TreeType
+{
+	TREETYPE_POMMIER,
+	TREETYPE_SAPIN,
+};
+
 
 class Arbre
 {
-private:
+protected:
 	double x;
 	double y;
 	int _age;
 	double _taille;
 	double _radius;
+	MayaGeometry _mgArbre;
+	int _treeType;
 
 public:
 	Arbre();
@@ -23,6 +31,7 @@ public:
 	int getAge() const;
 	double getTaille() const;
 	double getRadius() const;
+	int getTreeType() const {return _treeType;};
 
 	bool isInRadius(Arbre a);
 
@@ -32,6 +41,16 @@ public:
 	bool lifeProba(double proba);
 
 	bool grow();
+};
+
+class Pommier : public Arbre
+{
+protected:
+	static const int treeType = TREETYPE_POMMIER;
+public:
+	Pommier(double _x, double _y, double taille);
+	bool grow();
+
 };
 
 class Foret
@@ -47,7 +66,7 @@ public:
 	void allGrow();
 	
 	void fillTerrain(Terrain* ter, int nb_arbres, int type);
-	MayaGeometrySet foretToMGS(Terrain* ter);
+	void foretToMGS(Terrain* ter, QVector<MayaGeometrySet>& vec_mgs);
 };
 
 #endif
