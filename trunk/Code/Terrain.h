@@ -19,7 +19,7 @@ protected:
 	double* _bedRock;
 	double* _sandLayer;
 	double* _waterLayer;
-	bool* _growLayer;
+	
 	double* _waterPipe;
 	double* _waterVelocity;
 	double* _sediment;
@@ -29,7 +29,10 @@ protected:
 	int _size;
 	int _sizeArray;
 
-public:	
+public:
+	bool* _growLayer;
+
+public:
 	Terrain(int x);
 	double getHeight(int x, int y) const;
 	double getHeightOnLayer(int x, int y, int layer) const;
@@ -48,6 +51,7 @@ public:
 	void setLayerHeight(int x, int y, int layer, double height);
 
 	Vector getTerrainPoint(int i, int j, double h) const;
+	Vector getTerrainPoint(double i, double j, double h) const;
 
 	MayaGeometry toMG() const;
 	MayaGeometry noWaterToMG() const;
@@ -66,6 +70,7 @@ protected:
 
 public:
 	void fhsIteration();
+	void fhsIterationRendu();
 
 	void jetDEau(int i, int j);
 };

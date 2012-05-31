@@ -43,6 +43,10 @@ Terrain::Terrain(int size)
 
 double Terrain::getHeight(int x, int y) const
 {
+	if(x < 0 || y < 0 || x >= _size || y >=_size)
+	{
+		std::cout << "Depassement : size=" << _size << ", x=" << x << ", y=" << y << std::endl;
+	}
 	int ind = y*_size + x;
 	return _bedRock[ind] + _sandLayer[ind] + _waterLayer[ind];
 }
@@ -139,6 +143,15 @@ Vector Terrain::getTerrainPoint(int i, int j, double h) const
 	return Vector(
 		_terrainSize/2.0 - _terrainSize * (double)i/(double)(_size-1),
 		_terrainSize/2.0 - _terrainSize * (double)j/(double)(_size-1),
+		h * (double)_terrainSize/512.0
+		);
+}
+
+Vector Terrain::getTerrainPoint(double i, double j, double h) const
+{
+	return Vector(
+		_terrainSize/2.0 - _terrainSize * i/(double)(_size-1),
+		_terrainSize/2.0 - _terrainSize * j/(double)(_size-1),
 		h * (double)_terrainSize/512.0
 		);
 }
@@ -586,7 +599,7 @@ void Terrain::fhsRain()
 	{
 		for(int i=0; i<_size; i++)
 		{
-			if(getHeight(i, j) > _rainLevel)
+			if(/*getHeight(i, j) > _rainLevel*/ 1)
 			{
 				double d = getRelativeHeightOnLayer(i, j, LAYERTYPE_WATER);
 				setLayerHeight(i, j, LAYERTYPE_WATER, d+ 2e-4);
@@ -709,6 +722,15 @@ void Terrain::fhsIteration()
 	fhsTransport();
 
 	fhsEvaporation();
+}
+
+void Terrain::fhsIterationRendu()
+{
+	fhsWaterFlow_Pipe();
+	fhsWaterFlow_Speed();
+	fhsWaterFlow_Move();
+	fhsErosion();
+	fhsTransport();
 }
 
 void Terrain::jetDEau(int i, int j)

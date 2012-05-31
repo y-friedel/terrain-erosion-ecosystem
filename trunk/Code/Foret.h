@@ -1,6 +1,7 @@
 #ifndef __FORET__H__
 #define __FORET__H__
 #include "maya.h"
+#include "Terrain.h"
 
 class Arbre
 {
@@ -13,8 +14,8 @@ private:
 
 public:
 	Arbre();
-	Arbre(double x, double y);
-	Arbre(int age, double taille);
+	Arbre(double _x, double _y);
+	Arbre(double _x, double _y, int age, double taille);
 
 	double getX() const;
 	double getY() const;
@@ -42,6 +43,9 @@ public:
 	void addArbre(Arbre a);
 	void killArbre(int i);
 	Arbre getArbre(int i);
+	
+	void fillTerrain(Terrain* ter, int nb_arbres, int type);
+	MayaGeometrySet ForetToMGS(Terrain* ter);
 };
 
 #endif

@@ -40,6 +40,9 @@ protected:
 	void GenTerrainGaussian();
 	void GenTerrainPerlin();
 	void RenderTerrain();
+	
+	//Yo
+	void GenVeget();
 
 
   public slots:
@@ -54,6 +57,8 @@ protected:
     void ExecuteToolTerGenPerlin();
 	void ExecuteToolTerRender();
 	void ExecuteToolTerWater();
+	void ExecuteToolGenVeget();
+
 
 	/*
     void ExecuteTool01();

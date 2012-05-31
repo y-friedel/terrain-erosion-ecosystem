@@ -86,7 +86,7 @@ void MainWindow::GenTerrainPerlin()
 
 void MainWindow::GenTerrainGaussian()
 {
-	int size = 512;
+	int size = 64;
 
 	if(terrain == NULL)
 	{
@@ -111,7 +111,7 @@ void MainWindow::GenTerrainGaussian()
 
 void MainWindow::GenTerrainFlat()
 {
-	int size = 512;
+	int size = 32;
 
 	if(terrain == NULL)
 	{
@@ -134,14 +134,40 @@ void MainWindow::RenderTerrain()
 {
 	if(terrain != NULL)
 	{
+		MaterialObject mo={ ShaderPhongVertexColor, VertexColor, AColor(1,0,0,1), AColor(0.6,0.6,0.6,0.6), AColor(1,1,1,0), 50.,QString("")};
+
+
 		MayaGeometry mg_terrain = terrain->toMG();
 		MayaGeometry mg_water = terrain->waterToMG();
-		//mg_terrain.setMaterialObject(mo);
-		int size = terrain->getSize();
-		mayaglWidget->clearWorld();
 		MayaGeometryAll mga = MayaGeometrySet(mg_terrain,MayaFrame::Id);
 		mga.Append(mg_water);
-		mga.Translate(Vector(-size/2., -size/2., -128));
+
+		mayaglWidget->clearWorld();
+		mayaglWidget->setWorld(mga);
+	}
+}
+
+void MainWindow::GenVeget()
+{
+	std::cout << "LOL" << std::endl;
+	if(terrain != NULL)
+	{
+		MaterialObject mo={ ShaderPhongVertexColor, VertexColor, AColor(1,0,0,1), AColor(0.6,0.6,0.6,0.6), AColor(1,1,1,0), 50.,QString("")};
+
+
+		MayaGeometry mg_terrain = terrain->toMG();
+		MayaGeometry mg_water = terrain->waterToMG();
+		MayaGeometryAll mga = MayaGeometrySet(mg_terrain,MayaFrame::Id);
+		mga.Append(mg_water);
+
+		//Creation de la couche foret
+		Foret fo = Foret();
+		fo.fillTerrain(terrain, 15000, 0);
+		MayaGeometrySet mgs = fo.ForetToMGS(terrain);
+		
+		mga.Append(mgs);
+
+		mayaglWidget->clearWorld();
 		mayaglWidget->setWorld(mga);
 	}
 }
@@ -169,6 +195,12 @@ void MainWindow::ExecuteToolTerRender()
 	RenderTerrain();
 }
 
+void MainWindow::ExecuteToolGenVeget()
+{
+	GenVeget();
+}
+
+bool rendu = false;
 void MainWindow::ExecuteToolTerWater()
 {
 	if(terrain != NULL)
@@ -180,8 +212,13 @@ void MainWindow::ExecuteToolTerWater()
 		{
 			double wl = terrain->getRelativeHeightOnLayer(center,center,LAYERTYPE_WATER);
 			terrain->jetDEau(center-64,center);
-
-			terrain->fhsIteration();
+			
+			if(rendu)
+			{
+				terrain->fhsIteration();
+			}else{
+				terrain->fhsIteration();
+			}
 
 			MayaGeometry mg_terrain = terrain->toMG();
 			MayaGeometry mg_water = terrain->waterToMG();
@@ -189,7 +226,7 @@ void MainWindow::ExecuteToolTerWater()
 			int size = terrain->getSize();
 			MayaGeometryAll mga = MayaGeometrySet(mg_terrain,MayaFrame::Id);
 			mga.Append(mg_water);
-			mga.Translate(Vector(-size/2., -size/2., -128));
+			//mga.Translate(Vector(-size/2., -size/2., -128));
 
 			if(i==nbIter-1)
 			{
@@ -199,6 +236,7 @@ void MainWindow::ExecuteToolTerWater()
 
 			std::cout << i << "/" << nbIter << std::endl;
 		}
+		rendu = true;
 		terrain->setGrowLayer();
 	}
 }
