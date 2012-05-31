@@ -149,8 +149,8 @@ void MainWindow::RenderTerrain()
 
 void MainWindow::GenVeget()
 {
-	std::cout << "LOL" << std::endl;
-	if(terrain != NULL)
+	std::cout << "Gen Veget" << std::endl;
+	if(terrain != NULL && foret != NULL)
 	{
 		MaterialObject mo={ ShaderPhongVertexColor, VertexColor, AColor(1,0,0,1), AColor(0.6,0.6,0.6,0.6), AColor(1,1,1,0), 50.,QString("")};
 
@@ -161,11 +161,29 @@ void MainWindow::GenVeget()
 		mga.Append(mg_water);
 
 		//Creation de la couche foret
-		Foret fo = Foret();
-		fo.fillTerrain(terrain, 15000, 0);
-		MayaGeometrySet mgs = fo.ForetToMGS(terrain);
+		foret = new Foret();
+		foret->fillTerrain(terrain, 10000, 0);
+		MayaGeometrySet mgs = foret->foretToMGS(terrain);
 		
 		mga.Append(mgs);
+
+		mayaglWidget->clearWorld();
+		mayaglWidget->setWorld(mga);
+	}
+}
+
+void MainWindow::GrowVeget()
+{
+	if(terrain != NULL && foret != NULL)
+	{
+		MayaGeometry mg_terrain = terrain->toMG();
+		MayaGeometry mg_water = terrain->waterToMG();
+		MayaGeometryAll mga = MayaGeometrySet(mg_terrain,MayaFrame::Id);
+		mga.Append(mg_water);
+
+		foret->allGrow();
+
+		mga.Append(foret->foretToMGS(terrain));
 
 		mayaglWidget->clearWorld();
 		mayaglWidget->setWorld(mga);
@@ -198,6 +216,11 @@ void MainWindow::ExecuteToolTerRender()
 void MainWindow::ExecuteToolGenVeget()
 {
 	GenVeget();
+}
+
+void MainWindow::ExecuteToolGrowVeget()
+{
+	GrowVeget();
 }
 
 bool rendu = false;

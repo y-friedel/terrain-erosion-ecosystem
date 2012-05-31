@@ -44,6 +44,7 @@ public:
     QPushButton *Objects_pushButton_terRender;
     QPushButton *Objects_pushButton_terWater;
     QPushButton *Objects_pushButton_genVeget;
+    QPushButton *Objects_pushButton_growVeget;
 
 	/*
     QPushButton *Objects_o05_pushButton;
@@ -172,11 +173,18 @@ public:
     Objects_pushButton_terWater->setCheckable(true);
 	posY += stepY;
 
-		/* LINE */
+	/* LINE */
     Objects_pushButton_genVeget = new QPushButton(Objects_groupBox);
     Objects_pushButton_genVeget->setObjectName(QString::fromUtf8("Objects_pushButton_genVeget"));
     Objects_pushButton_genVeget->setGeometry(QRect(0, posY, 140, 23));
     Objects_pushButton_genVeget->setCheckable(true);
+	posY += stepY;
+
+	/* LINE */
+    Objects_pushButton_growVeget = new QPushButton(Objects_groupBox);
+    Objects_pushButton_growVeget->setObjectName(QString::fromUtf8("Objects_pushButton_growVeget"));
+    Objects_pushButton_growVeget->setGeometry(QRect(0, posY, 140, 23));
+    Objects_pushButton_growVeget->setCheckable(true);
 	posY += stepY;
 
 	/*
@@ -382,7 +390,9 @@ public:
     Objects_pushButton_terGenPerlin->setText(QApplication::translate("Assets", "Gen Perlin", 0, QApplication::UnicodeUTF8));
     Objects_pushButton_terRender->setText(QApplication::translate("Assets", "Render terrain", 0, QApplication::UnicodeUTF8));
     Objects_pushButton_terWater->setText(QApplication::translate("Assets", "Erosion simulation", 0, QApplication::UnicodeUTF8));
-    Objects_pushButton_genVeget->setText(QApplication::translate("Assets", "Veget simulation", 0, QApplication::UnicodeUTF8));
+    
+	Objects_pushButton_genVeget->setText(QApplication::translate("Assets", "Veget simulation", 0, QApplication::UnicodeUTF8));
+    Objects_pushButton_growVeget->setText(QApplication::translate("Assets", "Grow simulation", 0, QApplication::UnicodeUTF8));
 
     /*Objects_o05_pushButton->setText(QApplication::translate("Assets", "o5", 0, QApplication::UnicodeUTF8));
     Objects_o03_pushButton->setText(QApplication::translate("Assets", "o3", 0, QApplication::UnicodeUTF8));
