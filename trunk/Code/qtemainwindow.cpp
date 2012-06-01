@@ -33,10 +33,10 @@ void MainWindow::createActions()
 	connect(interfaceMainWindow.actionExport_ma , SIGNAL(triggered()), this, SLOT(ExportMaya()));
 	connect(interfaceMainWindow.actionExit      , SIGNAL(triggered()), this, SLOT(close()));
 
-	connect(interfaceMainWindow.Objects_pushButton_void0, SIGNAL( clicked() ), this, SLOT(ExecuteToolVoid0()));
-	connect(interfaceMainWindow.Objects_pushButton_void1, SIGNAL( clicked() ), this, SLOT(ExecuteToolVoid1()));
-	connect(interfaceMainWindow.Objects_pushButton_terGenFlat, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerGenFlat()));
-	connect(interfaceMainWindow.Objects_pushButton_terGenGaussian, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerGenGaussian()));
+	//connect(interfaceMainWindow.Objects_pushButton_void0, SIGNAL( clicked() ), this, SLOT(ExecuteToolVoid0()));
+	//connect(interfaceMainWindow.Objects_pushButton_void1, SIGNAL( clicked() ), this, SLOT(ExecuteToolVoid1()));
+	//connect(interfaceMainWindow.Objects_pushButton_terGenFlat, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerGenFlat()));
+	//connect(interfaceMainWindow.Objects_pushButton_terGenGaussian, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerGenGaussian()));
 	connect(interfaceMainWindow.Objects_pushButton_terGenPerlin, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerGenPerlin()));
 	connect(interfaceMainWindow.Objects_pushButton_terRender, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerRender()));
 	connect(interfaceMainWindow.Objects_pushButton_terWater, SIGNAL( clicked() ), this, SLOT(ExecuteToolTerWater()));
@@ -44,6 +44,10 @@ void MainWindow::createActions()
 	//Veget
 	connect(interfaceMainWindow.Objects_pushButton_genVeget, SIGNAL( clicked() ), this, SLOT(ExecuteToolGenVeget()));
 	connect(interfaceMainWindow.Objects_pushButton_growVeget, SIGNAL( clicked() ), this, SLOT(ExecuteToolGrowVeget()));
+
+	//Veget
+	connect(interfaceMainWindow.Objects_pushButton_demo, SIGNAL( clicked() ), this, SLOT(ExecuteToolDemo()));
+	connect(interfaceMainWindow.Objects_pushButton_tsunami, SIGNAL( clicked() ), this, SLOT(ExecuteToolTsunami()));
 
 	// Connection des boutons
 	/*

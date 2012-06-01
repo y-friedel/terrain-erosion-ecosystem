@@ -414,10 +414,9 @@ MayaGeometry Terrain::waterToMG() const
 
 
 
-void Terrain::fhsWaterFlow_PipeCell(int i, int j)
+void Terrain::fhsWaterFlow_PipeCell(int i, int j, double dt)
 {
 	//const double dt = 5e-6;
-	const double dt = 5e-6;
 	const double g = 9.809; //Gravity on Paris
 	const double A = 2.5;
 	const double l = 1./0.01;
@@ -491,13 +490,13 @@ void Terrain::fhsWaterFlow_PipeCell(int i, int j)
 
 }
 
-void Terrain::fhsWaterFlow_Pipe()
+void Terrain::fhsWaterFlow_Pipe(double dt)
 {
 	for(int j=0; j<_size; j++)
 	{
 		for(int i=0; i<_size; i++)
 		{
-			fhsWaterFlow_PipeCell(i, j);
+			fhsWaterFlow_PipeCell(i, j, dt);
 		}
 	}
 }
@@ -1091,9 +1090,9 @@ void Terrain::fhsSandTransport()
 	}
 }
 */
-void Terrain::fhsIterationWater()
+void Terrain::fhsIterationWater(double dt)
 {
-	fhsWaterFlow_Pipe();
+	fhsWaterFlow_Pipe(dt);
 	fhsWaterFlow_Speed();
 	fhsWaterFlow_Move();
 }

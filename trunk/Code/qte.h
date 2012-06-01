@@ -66,6 +66,10 @@ protected:
 	void ExecuteToolGenVeget();
 	void ExecuteToolGrowVeget();
 
+	//Veget
+	void ExecuteToolDemo();
+	void ExecuteToolTsunami();
+
 
 	/*
     void ExecuteTool01();

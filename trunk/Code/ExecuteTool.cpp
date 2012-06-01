@@ -2,6 +2,7 @@
 #include "Terrain.h"
 #include "Foret.h"
 #include "Perlin_d.h"
+#include "Stuff.h"
 
 /*! 
 \brief TODO 
@@ -43,8 +44,11 @@ void MainWindow::GenTerrainPerlin()
 {
 	int size = 512;
 
-	if(terrain == NULL)
+	if(terrain != NULL)
 	{
+		delete terrain;
+	}
+	
 		terrain = new Terrain(size);
 
 /** PERLIN V2 ********************************************************************************/
@@ -81,7 +85,6 @@ void MainWindow::GenTerrainPerlin()
 			}
 		}
 		*/
-	}
 }
 
 void MainWindow::GenTerrainGaussian()
@@ -237,6 +240,48 @@ void MainWindow::ExecuteToolGrowVeget()
 	GrowVeget();
 }
 
+void MainWindow::ExecuteToolDemo()
+{
+	ExecuteToolTerWater();
+	RenderTerrain();
+	GenVeget();
+	GrowVeget();
+}
+
+void MainWindow::ExecuteToolTsunami()
+{
+	double sigma = 20.0;
+	for(int j = 0; j<terrain->getSize(); j++)
+	{
+		for(int i = 0; i<sigma*3; i++)
+		{
+			double h = terrain->getHeight(i, j);
+			double gauss = gaussianFunction(i, sigma);
+			terrain->setLayerHeight(i, j, LAYERTYPE_WATER, max(0.0, (250 - h)) );
+		}
+	}
+
+	if(terrain != NULL)
+	{
+		const int nbIter = 500;
+
+		for(int i=0; i<nbIter; i++)
+		{
+			terrain->fhsIterationWater(1e-4);
+			//terrain->fhsIterationErosion();
+
+			//terrain->thermalErosion(0.001, 0.01);
+
+			if(i%10==0 || i == nbIter-1)
+			{
+				RenderTerrain();
+			}
+
+			std::cout << i << "/" << nbIter << std::endl;
+		}
+	}
+}
+
 bool rendu = false;
 void MainWindow::ExecuteToolTerWater()
 {
@@ -255,7 +300,7 @@ void MainWindow::ExecuteToolTerWater()
 
 			terrain->thermalErosion(0.001, 0.01);
 
-			if(i%50==0 || i == nbIter-1)
+			if(i%10==0 || i == nbIter-1)
 			{
 				MayaGeometry mg_terrain = terrain->toMG();
 				MayaGeometryAll mga = MayaGeometrySet(mg_terrain,MayaFrame::Id);
