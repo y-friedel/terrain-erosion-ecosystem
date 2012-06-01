@@ -266,10 +266,10 @@ void Foret::foretToMGS(Terrain* ter, QVector<MayaGeometrySet>& vec_mgs)
 	MaterialObject mo_tronc={ ShaderPhong, None, AColor(0.3,0.3,0.,1.0), AColor(0.5,0.4,0.2,1.0), AColor(0.1,0.1,0.1,1.0), 50.,QString("")};
 
 	//Fabrication du MG arbre : sapin
-	MayaGeometry mg_sapin=MayaGeometry::CreateCone(Vector(0,0,.3),Vector(0,0,2), 0.3,50);
+	MayaGeometry mg_sapin=MayaGeometry::CreateCone(Vector(0,0,.3),Vector(0,0,2), 0.3, 50, 0);
 	mg_sapin.setName("sapin");
 	mg_sapin.setMaterialObject(mo_sombre);
-	MayaGeometry mg_tronc=MayaGeometry::CreateCylinder(Vector(0,0,0),Vector(0,0,.3), 0.1,50);
+	MayaGeometry mg_tronc=MayaGeometry::CreateCylinder(Vector(0,0,0),Vector(0,0,.3), 0.1, 50);
 	mg_tronc.setMaterialObject(mo_tronc);
 	mg_sapin.Merge(mg_tronc);
 

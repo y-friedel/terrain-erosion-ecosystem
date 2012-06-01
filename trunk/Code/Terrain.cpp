@@ -8,7 +8,7 @@ Terrain::Terrain(int size)
 	_sizeArray = _size*_size;
 
 	_terrainSize = 20.0;
-	_rainLevel = 200.0;
+	_rainLevel = 0.0;
 
 	_bedRock = new double[_sizeArray];
 	_sandLayer = new double[_sizeArray];
@@ -172,7 +172,19 @@ MayaGeometry Terrain::toMG() const
 	{
 		for(int i = 0; i<_size; i++)
 		{
-			if(getLastLayer(i, j) == LAYERTYPE_ROCK)
+			if(isVegHost(i, j))
+			{
+				vec_couleur.append(Vector(0.3,0.6,0.3));
+			}
+			else if(getRelativeHeightOnLayer(i, j, LAYERTYPE_SAND) > 0.5)
+			{
+				vec_couleur.append(Vector(0.5,0.4,0.2));
+			}
+			else vec_couleur.append(Vector(0.3,0.3,0.3));
+			
+			vec_point.append(getTerrainPoint(i, j, getHeightOnLayer(i, j, LAYERTYPE_SAND)));
+
+			/*if(getLastLayer(i, j) == LAYERTYPE_ROCK)
 			{
 				if(isVegHost(i, j))
 				{
@@ -185,7 +197,7 @@ MayaGeometry Terrain::toMG() const
 				//vec_couleur.append(Vector(0,0,0));
 				vec_point.append(getTerrainPoint(i, j, getHeight(i, j)));
 			}
-			if(getLastLayer(i, j) == LAYERTYPE_SAND)
+			if(getLastLayer(i, j) == LAYERTYPE_SAND || )
 			{
 				vec_couleur.append(Vector(0.5,0.4,0.2));
 				//vec_couleur.append(Vector(0,1,0));
@@ -210,7 +222,8 @@ MayaGeometry Terrain::toMG() const
 				}
 				//vec_couleur.append(Vector(0,0,1));
 				vec_point.append(getTerrainPoint(i, j, getHeightOnLayer(i, j, LAYERTYPE_SAND)));
-			}
+			}*/
+
 		}
 
 	}
@@ -316,7 +329,7 @@ MayaGeometry Terrain::waterToMG() const
 			{
 				vec_couleur.append(Vector(0.4,0.5,0.8));
 				//vec_couleur.append(Vector(0,0,1));
-				if(getRelativeHeightOnLayer(i, j, LAYERTYPE_WATER) > 0.1)
+				if(getRelativeHeightOnLayer(i, j, LAYERTYPE_WATER) > 0.01)
 				{
 					vec_point.append(getTerrainPoint(i, j, getHeight(i, j)));
 				}else{
@@ -402,7 +415,8 @@ MayaGeometry Terrain::waterToMG() const
 
 void Terrain::fhsWaterFlow_PipeCell(int i, int j)
 {
-	const double dt = 5e-7;
+	//const double dt = 5e-6;
+	const double dt = 5e-6;
 	const double g = 9.809; //Gravity on Paris
 	const double A = 2.5;
 	const double l = 1./0.01;
@@ -593,7 +607,7 @@ void Terrain::fhsWaterFlow_Move()
 }
 
 
-void Terrain::fhsRain()
+void Terrain::fhsRain(double level)
 {
 	for(int j=0; j<_size; j++)
 	{
@@ -602,20 +616,20 @@ void Terrain::fhsRain()
 			if(/*getHeight(i, j) > _rainLevel*/ 1)
 			{
 				double d = getRelativeHeightOnLayer(i, j, LAYERTYPE_WATER);
-				setLayerHeight(i, j, LAYERTYPE_WATER, d+ 2e-4);
+				setLayerHeight(i, j, LAYERTYPE_WATER, d + level);
 			}
 		}
 	}
 }
 
-void Terrain::fhsEvaporation()
+void Terrain::fhsEvaporation(double level)
 {
 	for(int j=0; j<_size; j++)
 	{
 		for(int i=0; i<_size; i++)
 		{
-			//double d = getRelativeHeightOnLayer(i, j, LAYERTYPE_WATER);
-			//setLayerHeight(i, j, LAYERTYPE_WATER, max(d- 5e-5, 0.0));
+			double d = getRelativeHeightOnLayer(i, j, LAYERTYPE_WATER);
+			setLayerHeight(i, j, LAYERTYPE_WATER, max(d- level, 0.0));
 		}
 	}
 }
@@ -627,7 +641,8 @@ void Terrain::fhsErosion()
 	{
 		for(int i=0; i<_size; i++)
 		{
-			double d = getHeightOnLayer(i, j, LAYERTYPE_ROCK);
+			double sandH = getRelativeHeightOnLayer(i, j, LAYERTYPE_ROCK);
+			double waterH = getRelativeHeightOnLayer(i, j, LAYERTYPE_WATER);
 			
 			ind = j*_size+i;
 
@@ -658,20 +673,39 @@ void Terrain::fhsErosion()
 				dhY += getHeightOnLayer(i, j-1, LAYERTYPE_ROCK);
 			}
 
-			double tilt = sqrt(dhX*dhX+dhY*dhY)*sqrt(pow(_waterVelocity[ind*2+0], 2) + pow(_waterVelocity[ind*2+1], 2))*0.03;
+			//double tilt = sqrt(dhX*dhX+dhY*dhY)*sqrt(pow(_waterVelocity[ind*2+0], 2) + pow(_waterVelocity[ind*2+1], 2))*0.03;
+			double tilt = sqrt(pow(_waterVelocity[ind*2+0], 2) + pow(_waterVelocity[ind*2+1], 2))*0.3;
 			
 
 			if(tilt < 0.0001)
 			{
-				setLayerHeight(i, j, LAYERTYPE_ROCK, d+_sediment[ind]*0.5);
+				setLayerHeight(i, j, LAYERTYPE_ROCK, sandH+_sediment[ind]*0.5);
 				_sediment[ind] *= 0.5;
 			}
 			else
 			{
-				double newRock = max(0.0, d - tilt);
+				double quantity;
+				double newSand = max(0.0, sandH - tilt);
+				setLayerHeight(i, j, LAYERTYPE_ROCK, newSand);
+				
+				quantity = sandH - newSand;
+/*
+				double rockH = getRelativeHeightOnLayer(i, j, LAYERTYPE_ROCK);
+				double newRock = max(0.0, rockH - tilt + quantity);
 				setLayerHeight(i, j, LAYERTYPE_ROCK, newRock);
-				_sediment[ind] += d - newRock;
+				
+				quantity += rockH - newRock;
+*/
+				_sediment[ind] += quantity;
 				_sedimentTmp[ind] = 0;
+			}
+
+			if(_sediment[ind] > waterH)
+			{
+				sandH = getRelativeHeightOnLayer(i, j, LAYERTYPE_ROCK);
+				sandH += _sediment[ind] - waterH;
+				_sediment[ind] = waterH;
+				//setLayerHeight(i, j, LAYERTYPE_SAND, sandH);
 			}
 		}
 	}
@@ -694,11 +728,86 @@ void Terrain::fhsTransport()
 		for(int i=0; i<_size; i++)
 		{
 			ind = j*_size+i;
-			
+			/*
+			float px = (float)i + _waterVelocity[ind*2+0]*0.5;
+			float py = (float)j + _waterVelocity[ind*2+1]*0.5;
+
+			int ix = px;
+			int iy = py;
+
+			float pxf = px - ix;
+			float pyf = py - iy;
+
+
+			_sedimentTmp[ind]
+			*/
+
 			int nx = max(min(i+(int)(_waterVelocity[ind*2+0]*0.5), _size-1), 0);
 			int ny = max(min(j+(int)(_waterVelocity[ind*2+1]*0.5), _size-1), 0);
+/*
+			if(nx > i) nx = i+1;
+			else if(nx < i) nx = i-1;
 
-			_sedimentTmp[ind] += _sediment[ind];
+			if(ny > i) ny = j+1;
+			else if(ny < i) ny = j-1;
+
+			_sedimentTmp[ny*_size+nx] += _sediment[ind];*/
+
+			int tx = nx;
+			int ty = ny;
+
+			if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+			{
+				_sedimentTmp[ty*_size+tx] += _sediment[ind]/9;
+			}
+			tx = nx-1;
+			ty = ny;
+			if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+			{
+				_sedimentTmp[ty*_size+tx] += _sediment[ind]/9;
+			}
+			tx = nx+1;
+			ty = ny;
+			if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+			{
+				_sedimentTmp[ty*_size+tx] += _sediment[ind]/9;
+			}
+			tx = nx;
+			ty = ny-1;
+			if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+			{
+				_sedimentTmp[ty*_size+tx] += _sediment[ind]/9;
+			}
+			tx = nx;
+			ty = ny+1;
+			if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+			{
+				_sedimentTmp[ty*_size+tx] += _sediment[ind]/9;
+			}
+			tx = nx-1;
+			ty = ny-1;
+			if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+			{
+				_sedimentTmp[ty*_size+tx] += _sediment[ind]/9;
+			}
+			tx = nx+1;
+			ty = ny-1;
+			if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+			{
+				_sedimentTmp[ty*_size+tx] += _sediment[ind]/9;
+			}
+			tx = nx-1;
+			ty = ny+1;
+			if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+			{
+				_sedimentTmp[ty*_size+tx] += _sediment[ind]/9;
+			}
+			tx = nx+1;
+			ty = ny+1;
+			if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+			{
+				_sedimentTmp[ty*_size+tx] += _sediment[ind]/9;
+			}
 		}
 	}
 
@@ -712,16 +821,282 @@ void Terrain::fhsTransport()
 	}
 }
 
+void Terrain::thermalErosion(double T, double C)
+{
+	int ind;
+	int tx;
+	int ty;
+
+	for(int j=0; j<_size; j++)
+	{
+		for(int i=0; i<_size; i++)
+		{
+			ind = j*_size+i;
+
+			double diffFactor = T;
+			double erosionFactor = C;
+
+			double diffTotal = 0;
+			double diffMax = 0;
+			
+			double diff;
+			double diffL;
+			double diffR;
+			double diffT;
+			double diffB;
+			double diffTL;
+			double diffTR;
+			double diffBL;
+			double diffBR;
+
+			double h = getHeightOnLayer(i, j, LAYERTYPE_ROCK);
+
+			tx = i-1;
+			ty = j;
+			if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+			{
+				diff = h - getHeightOnLayer(tx, ty, LAYERTYPE_ROCK);
+				if(diff > diffMax) diffMax = diff;
+				if(diff > diffFactor) diffTotal += diff;
+				diffL = diff;
+			}
+			tx = i+1;
+			ty = j;
+			if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+			{
+				diff = h - getHeightOnLayer(tx, ty, LAYERTYPE_ROCK);
+				if(diff > diffMax) diffMax = diff;
+				if(diff > diffFactor) diffTotal += diff;
+				diffR = diff;
+			}
+			tx = i;
+			ty = j-1;
+			if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+			{
+				diff = h - getHeightOnLayer(tx, ty, LAYERTYPE_ROCK);
+				if(diff > diffMax) diffMax = diff;
+				if(diff > diffFactor) diffTotal += diff;
+				diffB = diff;
+			}
+			tx = i;
+			ty = j+1;
+			if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+			{
+				diff = h - getHeightOnLayer(tx, ty, LAYERTYPE_ROCK);
+				if(diff > diffMax) diffMax = diff;
+				if(diff > diffFactor) diffTotal += diff;
+				diffT = diff;
+			}
+			tx = i-1;
+			ty = j-1;
+			if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+			{
+				diff = h - getHeightOnLayer(tx, ty, LAYERTYPE_ROCK);
+				if(diff > diffMax) diffMax = diff;
+				if(diff > diffFactor) diffTotal += diff;
+				diffBL = diff;
+			}
+			tx = i+1;
+			ty = j-1;
+			if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+			{
+				diff = h - getHeightOnLayer(tx, ty, LAYERTYPE_ROCK);
+				if(diff > diffMax) diffMax = diff;
+				if(diff > diffFactor) diffTotal += diff;
+				diffBR = diff;
+			}
+			tx = i-1;
+			ty = j+1;
+			if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+			{
+				diff = h - getHeightOnLayer(tx, ty, LAYERTYPE_ROCK);
+				if(diff > diffMax) diffMax = diff;
+				if(diff > diffFactor) diffTotal += diff;
+				diffTL = diff;
+			}
+			tx = i+1;
+			ty = j+1;
+			if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+			{
+				diff = h - getHeightOnLayer(tx, ty, LAYERTYPE_ROCK);
+				if(diff > diffMax) diffMax = diff;
+				if(diff > diffFactor) diffTotal += diff;
+				diffTR = diff;
+			}
+
+			/* EROSION */
+			if(diffTotal != 0)
+			{
+				double newH;
+				double quantity = 0;
+				int nMove = 0;
+
+				tx = i-1;
+				ty = j;
+				if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+				{
+					diff = diffL;
+					if(diff > 0)
+					{
+						newH = getHeightOnLayer(tx, ty, LAYERTYPE_ROCK);
+						newH += erosionFactor * (diffMax - diffFactor)*(diff / diffTotal);
+						setLayerHeight(tx, ty, LAYERTYPE_ROCK, newH);
+						nMove++;
+						quantity += erosionFactor * (diffMax - diffFactor)*(diff / diffTotal);
+					}
+				}
+				tx = i+1;
+				ty = j;
+				if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+				{
+					diff = diffR;
+					if(diff > 0)
+					{
+						newH = getHeightOnLayer(tx, ty, LAYERTYPE_ROCK);
+						newH += erosionFactor * (diffMax - diffFactor)*(diff / diffTotal);
+						setLayerHeight(tx, ty, LAYERTYPE_ROCK, newH);
+						nMove++;
+						quantity += erosionFactor * (diffMax - diffFactor)*(diff / diffTotal);
+					}
+				}
+				tx = i;
+				ty = j-1;
+				if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+				{
+					diff = diffB;
+					if(diff > 0)
+					{
+						newH = getHeightOnLayer(tx, ty, LAYERTYPE_ROCK);
+						newH += erosionFactor * (diffMax - diffFactor)*(diff / diffTotal);
+						setLayerHeight(tx, ty, LAYERTYPE_ROCK, newH);
+						nMove++;
+						quantity += erosionFactor * (diffMax - diffFactor)*(diff / diffTotal);
+					}
+				}
+				tx = i;
+				ty = j+1;
+				if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+				{
+					diff = diffT;
+					if(diff > 0)
+					{
+						newH = getHeightOnLayer(tx, ty, LAYERTYPE_ROCK);
+						newH += erosionFactor * (diffMax - diffFactor)*(diff / diffTotal);
+						setLayerHeight(tx, ty, LAYERTYPE_ROCK, newH);
+						nMove++;
+						quantity += erosionFactor * (diffMax - diffFactor)*(diff / diffTotal);
+					}
+				}
+				tx = i-1;
+				ty = j-1;
+				if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+				{
+					diff = diffBL;
+					if(diff > 0)
+					{
+						newH = getHeightOnLayer(tx, ty, LAYERTYPE_ROCK);
+						newH += erosionFactor * (diffMax - diffFactor)*(diff / diffTotal);
+						setLayerHeight(tx, ty, LAYERTYPE_ROCK, newH);
+						nMove++;
+						quantity += erosionFactor * (diffMax - diffFactor)*(diff / diffTotal);
+					}
+				}
+				tx = i+1;
+				ty = j-1;
+				if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+				{
+					diff = diffBR;
+					if(diff > 0)
+					{
+						newH = getHeightOnLayer(tx, ty, LAYERTYPE_ROCK);
+						newH += erosionFactor * (diffMax - diffFactor)*(diff / diffTotal);
+						setLayerHeight(tx, ty, LAYERTYPE_ROCK, newH);
+						nMove++;
+						quantity += erosionFactor * (diffMax - diffFactor)*(diff / diffTotal);
+					}
+				}
+				tx = i-1;
+				ty = j+1;
+				if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+				{
+					diff = diffTL;
+					if(diff > 0)
+					{
+						newH = getHeightOnLayer(tx, ty, LAYERTYPE_ROCK);
+						newH += erosionFactor * (diffMax - diffFactor)*(diff / diffTotal);
+						setLayerHeight(tx, ty, LAYERTYPE_ROCK, newH);
+						nMove++;
+						quantity += erosionFactor * (diffMax - diffFactor)*(diff / diffTotal);
+					}
+				}
+				tx = i+1;
+				ty = j+1;
+				if(tx >= 0 && tx < _size && ty >= 0 && ty < _size)
+				{
+					diff = diffTR;
+					if(diff > 0)
+					{
+						newH = getHeightOnLayer(tx, ty, LAYERTYPE_ROCK);
+						newH += erosionFactor * (diffMax - diffFactor)*(diff / diffTotal);
+						setLayerHeight(tx, ty, LAYERTYPE_ROCK, newH);
+						nMove++;
+						quantity += erosionFactor * (diffMax - diffFactor)*(diff / diffTotal);
+					}
+				}
+
+
+				newH = h - quantity;
+				setLayerHeight(i, j, LAYERTYPE_ROCK, newH);
+			}
+		}
+	}
+}
+
+/*
+void Terrain::fhsSandTransport()
+{
+	for(int j=0; j<_size; j++)
+	{
+		for(int i=0; i<_size; i++)
+		{
+			ind = j*_size+i;
+
+			getHeight(i, j)
+
+			double dLeft;
+			double dRight;
+			double dTop;
+			double dBottom;
+			
+			if(i > 0)
+			{
+				dLeft = max(0.0, getHeight(i, j) - getHeight(i-1, j));
+			}
+			if(i < _size-1)
+			{
+				dRight = max(0.0, getHeight(i, j) - getHeight(i+1, j));
+			}
+			if(j > 0)
+			{
+				dBottom = max(0.0, getHeight(i, j) - getHeight(i, j-1));
+			}
+			if(j < _size-1)
+			{
+				dTop = max(0.0, getHeight(i, j) - getHeight(i, j+1));
+			}
+
+			
+		}
+	}
+}
+*/
 void Terrain::fhsIteration()
 {
-	fhsRain();
 	fhsWaterFlow_Pipe();
 	fhsWaterFlow_Speed();
 	fhsWaterFlow_Move();
 	fhsErosion();
 	fhsTransport();
-
-	fhsEvaporation();
 }
 
 void Terrain::fhsIterationRendu()
