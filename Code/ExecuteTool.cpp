@@ -152,9 +152,9 @@ void MainWindow::RenderTerrain()
 
 void MainWindow::GenVeget()
 {
-	std::cout << "Gen Veget" << std::endl;
 	if(terrain != NULL && foret != NULL)
-	{
+	{	
+		std::cout << "Gen Veget" << std::endl;
 		MaterialObject mo={ ShaderPhongVertexColor, VertexColor, AColor(1,0,0,1), AColor(0.6,0.6,0.6,0.6), AColor(1,1,1,0), 50.,QString("")};
 
 
@@ -242,27 +242,37 @@ void MainWindow::ExecuteToolGrowVeget()
 
 void MainWindow::ExecuteToolDemo()
 {
-	ExecuteToolTerWater();
-	RenderTerrain();
-	GenVeget();
-	GrowVeget();
+	if(terrain == NULL)
+	{
+		std::cout << "Cette operation necessite un terrain (Gen. Terrain)" << std::endl;
+	}
+	else
+	{
+		ExecuteToolTerWater();
+		RenderTerrain();
+		GenVeget();
+		GrowVeget();
+	}
 }
 
 void MainWindow::ExecuteToolTsunami()
 {
-	double sigma = 20.0;
-	for(int j = 0; j<terrain->getSize(); j++)
+	if(terrain == NULL)
 	{
-		for(int i = 0; i<sigma*3; i++)
-		{
-			double h = terrain->getHeight(i, j);
-			double gauss = gaussianFunction(i, sigma);
-			terrain->setLayerHeight(i, j, LAYERTYPE_WATER, max(0.0, (250 - h)) );
-		}
+		std::cout << "Cette operation necessite un terrain (Gen. Terrain)" << std::endl;
 	}
-
-	if(terrain != NULL)
+	else
 	{
+		double sigma = 20.0;
+		for(int j = 0; j<terrain->getSize(); j++)
+		{
+			for(int i = 0; i<sigma*3; i++)
+			{
+				double h = terrain->getHeight(i, j);
+				double gauss = gaussianFunction(i, sigma);
+				terrain->setLayerHeight(i, j, LAYERTYPE_WATER, max(0.0, (250 - h)) );
+			}
+		}
 		const int nbIter = 500;
 
 		for(int i=0; i<nbIter; i++)
