@@ -41,7 +41,8 @@ double Arbre::getRadius() const
 
 bool Arbre::isInRadius(Arbre a)
 {
-	return( pow((x-a.getX()), 2) + pow((y-a.getY()),2)+0.1 < a.getRadius()*10 );
+	return( pow((x-a.getX()), 2) + pow((y-a.getY()),2)+0.001 < a.getRadius()*10 ||
+			pow((x-a.getX()), 2) + pow((y-a.getY()),2)+0.001 < getRadius()*10);
 }
 
 void Arbre::setAge(int age)
@@ -186,7 +187,7 @@ void Foret::fillTerrain(Terrain* ter, int nb_arbres, int type)
 	_arbres.append(Arbre(x_arbre, y_arbre, (int)age, age/100));
 
 	std::cout << "REMPLISSAGE TERRAIN :" << std::endl;
-	while(i < nb_arbres && delay != nb_arbres*nb_arbres)
+	while(i < nb_arbres && delay != nb_arbres*5)
 	{
 		delay++;
 		do
@@ -266,7 +267,7 @@ void Foret::foretToMGS(Terrain* ter, QVector<MayaGeometrySet>& vec_mgs)
 	MaterialObject mo_tronc={ ShaderPhong, None, AColor(0.3,0.3,0.,1.0), AColor(0.5,0.4,0.2,1.0), AColor(0.1,0.1,0.1,1.0), 50.,QString("")};
 
 	//Fabrication du MG arbre : sapin
-	MayaGeometry mg_sapin=MayaGeometry::CreateCone(Vector(0,0,.3),Vector(0,0,2), 0.3, 50, 0);
+	MayaGeometry mg_sapin=MayaGeometry::CreateCone(Vector(0,0,.3),Vector(0,0,2), 0.3, 0, 50);
 	mg_sapin.setName("sapin");
 	mg_sapin.setMaterialObject(mo_sombre);
 	MayaGeometry mg_tronc=MayaGeometry::CreateCylinder(Vector(0,0,0),Vector(0,0,.3), 0.1, 50);
