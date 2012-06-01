@@ -1151,7 +1151,6 @@ void Terrain::setGrowLayer()
 	//Affinage
 	int compteur;
 	bool redo = true;
-	std::cout << "OKOKOKOKOKOKOKOK" << endl;
 	while(redo)
 	{
 		redo = false;

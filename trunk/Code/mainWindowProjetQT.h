@@ -99,8 +99,9 @@ public:
     {
     if (Assets->objectName().isEmpty())
         Assets->setObjectName(QString::fromUtf8("Assets"));
-    Assets->resize(781, 577);
+    //Assets->resize(781, 577);
     Assets->setMinimumSize(QSize(420, 300));
+	Assets->showMaximized();
     actionExit = new QAction(Assets);
     actionExit->setObjectName(QString::fromUtf8("actionExit"));
     actionNew_Scene = new QAction(Assets);
