@@ -39,12 +39,15 @@ public:
     QPushButton *Objects_pushButton_void1;
 
     QPushButton *Objects_pushButton_terGenPerlin;
-    QPushButton *Objects_pushButton_terGenGaussian;
-    QPushButton *Objects_pushButton_terGenFlat;
+    //QPushButton *Objects_pushButton_terGenGaussian;
+    //QPushButton *Objects_pushButton_terGenFlat;
     QPushButton *Objects_pushButton_terRender;
     QPushButton *Objects_pushButton_terWater;
     QPushButton *Objects_pushButton_genVeget;
     QPushButton *Objects_pushButton_growVeget;
+
+    QPushButton *Objects_pushButton_demo;
+    QPushButton *Objects_pushButton_tsunami;
 
 	/*
     QPushButton *Objects_o05_pushButton;
@@ -126,7 +129,7 @@ public:
 	int posY = 20;
 	int stepY = 23;
 
-	/* LINE */
+	/* LINE *//*
     Objects_pushButton_void0 = new QPushButton(Objects_groupBox);
     Objects_pushButton_void0->setObjectName(QString::fromUtf8("Objects_pushButton_void0"));
     Objects_pushButton_void0->setGeometry(QRect(0, posY, 70, 23));
@@ -136,21 +139,21 @@ public:
     Objects_pushButton_void1->setObjectName(QString::fromUtf8("Objects_pushButton_void1"));
     Objects_pushButton_void1->setGeometry(QRect(70, posY, 70, 23));
     Objects_pushButton_void1->setCheckable(true);
-	posY += stepY;
+	posY += stepY;*/
 
-	/* LINE */
+	/* LINE *//*
     Objects_pushButton_terGenFlat = new QPushButton(Objects_groupBox);
     Objects_pushButton_terGenFlat->setObjectName(QString::fromUtf8("Objects_pushButton_terGenFlat"));
     Objects_pushButton_terGenFlat->setGeometry(QRect(0, posY, 140, 23));
     Objects_pushButton_terGenFlat->setCheckable(true);
-	posY += stepY;
+	posY += stepY;*/
 
-	/* LINE */
+	/* LINE *//*
     Objects_pushButton_terGenGaussian = new QPushButton(Objects_groupBox);
     Objects_pushButton_terGenGaussian->setObjectName(QString::fromUtf8("Objects_pushButton_terGenGaussian"));
     Objects_pushButton_terGenGaussian->setGeometry(QRect(0, posY, 140, 23));
     Objects_pushButton_terGenGaussian->setCheckable(true);
-	posY += stepY;
+	posY += stepY;*/
 
 	/* LINE */
     Objects_pushButton_terGenPerlin = new QPushButton(Objects_groupBox);
@@ -158,19 +161,19 @@ public:
     Objects_pushButton_terGenPerlin->setGeometry(QRect(0, posY, 140, 23));
     Objects_pushButton_terGenPerlin->setCheckable(true);
 	posY += stepY;
+	posY += stepY;
+	/* LINE */
+    Objects_pushButton_terWater = new QPushButton(Objects_groupBox);
+    Objects_pushButton_terWater->setObjectName(QString::fromUtf8("Objects_pushButton_terWater"));
+    Objects_pushButton_terWater->setGeometry(QRect(0, posY, 140, 23));
+    Objects_pushButton_terWater->setCheckable(true);
+	posY += stepY;
 
 	/* LINE */
     Objects_pushButton_terRender = new QPushButton(Objects_groupBox);
     Objects_pushButton_terRender->setObjectName(QString::fromUtf8("Objects_pushButton_terRender"));
     Objects_pushButton_terRender->setGeometry(QRect(0, posY, 140, 23));
     Objects_pushButton_terRender->setCheckable(true);
-	posY += stepY;
-
-	/* LINE */
-    Objects_pushButton_terWater = new QPushButton(Objects_groupBox);
-    Objects_pushButton_terWater->setObjectName(QString::fromUtf8("Objects_pushButton_terWater"));
-    Objects_pushButton_terWater->setGeometry(QRect(0, posY, 140, 23));
-    Objects_pushButton_terWater->setCheckable(true);
 	posY += stepY;
 
 	/* LINE */
@@ -185,6 +188,22 @@ public:
     Objects_pushButton_growVeget->setObjectName(QString::fromUtf8("Objects_pushButton_growVeget"));
     Objects_pushButton_growVeget->setGeometry(QRect(0, posY, 140, 23));
     Objects_pushButton_growVeget->setCheckable(true);
+	posY += stepY;
+
+	posY += stepY;
+
+	/* LINE */
+    Objects_pushButton_demo = new QPushButton(Objects_groupBox);
+    Objects_pushButton_demo->setObjectName(QString::fromUtf8("Objects_pushButton_demo"));
+    Objects_pushButton_demo->setGeometry(QRect(0, posY, 140, 23));
+    Objects_pushButton_demo->setCheckable(true);
+	posY += stepY;
+
+	/* LINE */
+    Objects_pushButton_tsunami = new QPushButton(Objects_groupBox);
+    Objects_pushButton_tsunami->setObjectName(QString::fromUtf8("Objects_pushButton_tsunami"));
+    Objects_pushButton_tsunami->setGeometry(QRect(0, posY, 140, 23));
+    Objects_pushButton_tsunami->setCheckable(true);
 	posY += stepY;
 
 	/*
@@ -383,16 +402,20 @@ public:
     actionLoad_ma->setText(QApplication::translate("Assets", "Load", 0, QApplication::UnicodeUTF8));
     Objects_groupBox->setTitle(QApplication::translate("Assets", "Objects", 0, QApplication::UnicodeUTF8));
 
-    Objects_pushButton_void0->setText(QApplication::translate("Assets", "Cube", 0, QApplication::UnicodeUTF8));
-    Objects_pushButton_void1->setText(QApplication::translate("Assets", "Truc", 0, QApplication::UnicodeUTF8));
-    Objects_pushButton_terGenFlat->setText(QApplication::translate("Assets", "Gen Flat", 0, QApplication::UnicodeUTF8));
-    Objects_pushButton_terGenGaussian->setText(QApplication::translate("Assets", "Gen Gaussian", 0, QApplication::UnicodeUTF8));
-    Objects_pushButton_terGenPerlin->setText(QApplication::translate("Assets", "Gen Perlin", 0, QApplication::UnicodeUTF8));
-    Objects_pushButton_terRender->setText(QApplication::translate("Assets", "Render terrain", 0, QApplication::UnicodeUTF8));
-    Objects_pushButton_terWater->setText(QApplication::translate("Assets", "Erosion simulation", 0, QApplication::UnicodeUTF8));
-    
-	Objects_pushButton_genVeget->setText(QApplication::translate("Assets", "Veget simulation", 0, QApplication::UnicodeUTF8));
-    Objects_pushButton_growVeget->setText(QApplication::translate("Assets", "Grow simulation", 0, QApplication::UnicodeUTF8));
+    //Objects_pushButton_void0->setText(QApplication::translate("Assets", "Cube", 0, QApplication::UnicodeUTF8));
+    //Objects_pushButton_void1->setText(QApplication::translate("Assets", "Truc", 0, QApplication::UnicodeUTF8));
+    //Objects_pushButton_terGenFlat->setText(QApplication::translate("Assets", "Gen Flat", 0, QApplication::UnicodeUTF8));
+    //Objects_pushButton_terGenGaussian->setText(QApplication::translate("Assets", "Gen Gaussian", 0, QApplication::UnicodeUTF8));
+
+    Objects_pushButton_terGenPerlin->setText(QApplication::translate("Assets", "Gen. Terrain", 0, QApplication::UnicodeUTF8));
+
+    Objects_pushButton_terWater->setText(QApplication::translate("Assets", "1 - Erosion", 0, QApplication::UnicodeUTF8));
+    Objects_pushButton_terRender->setText(QApplication::translate("Assets", "2 - Show water", 0, QApplication::UnicodeUTF8));
+	Objects_pushButton_genVeget->setText(QApplication::translate("Assets", "3 - Gen. forest", 0, QApplication::UnicodeUTF8));
+    Objects_pushButton_growVeget->setText(QApplication::translate("Assets", "4 - Grow forest", 0, QApplication::UnicodeUTF8));
+
+    Objects_pushButton_demo->setText(QApplication::translate("Assets", "Demo", 0, QApplication::UnicodeUTF8));
+    Objects_pushButton_tsunami->setText(QApplication::translate("Assets", "Tsunami", 0, QApplication::UnicodeUTF8));
 
     /*Objects_o05_pushButton->setText(QApplication::translate("Assets", "o5", 0, QApplication::UnicodeUTF8));
     Objects_o03_pushButton->setText(QApplication::translate("Assets", "o3", 0, QApplication::UnicodeUTF8));

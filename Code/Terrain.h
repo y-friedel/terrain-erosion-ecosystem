@@ -59,15 +59,15 @@ public:
 
 //Fast Hydrolic Simulation
 protected:
-	void fhsWaterFlow_PipeCell(int i, int j);
-	void fhsWaterFlow_Pipe();
+	void fhsWaterFlow_PipeCell(int i, int j, double dt);
+	void fhsWaterFlow_Pipe(double dt);
 	void fhsWaterFlow_Move();
 	void fhsWaterFlow_Speed();
 	void fhsErosion();
 	void fhsTransport();
 
 public:
-	void fhsIterationWater();
+	void fhsIterationWater(double dt = 5e-6);
 	void fhsIterationErosion();
 	void fhsRain(double level);
 	void fhsEvaporation(double level);
