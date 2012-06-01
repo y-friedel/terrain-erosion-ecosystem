@@ -63,14 +63,16 @@ protected:
 	void fhsWaterFlow_Pipe();
 	void fhsWaterFlow_Move();
 	void fhsWaterFlow_Speed();
-	void fhsRain();
-	void fhsEvaporation();
 	void fhsErosion();
 	void fhsTransport();
 
 public:
-	void fhsIteration();
-	void fhsIterationRendu();
+	void fhsIterationWater();
+	void fhsIterationErosion();
+	void fhsRain(double level);
+	void fhsEvaporation(double level);
+
+	void thermalErosion(double T, double C);
 
 	void jetDEau(int i, int j);
 };

@@ -176,7 +176,8 @@ MayaGeometry Terrain::toMG() const
 			{
 				vec_couleur.append(Vector(0.3,0.6,0.3));
 			}
-			else if(getRelativeHeightOnLayer(i, j, LAYERTYPE_SAND) > 0.5)
+			else
+			if(getRelativeHeightOnLayer(i, j, LAYERTYPE_SAND) > 0.5)
 			{
 				vec_couleur.append(Vector(0.5,0.4,0.2));
 			}
@@ -1090,20 +1091,15 @@ void Terrain::fhsSandTransport()
 	}
 }
 */
-void Terrain::fhsIteration()
+void Terrain::fhsIterationWater()
 {
 	fhsWaterFlow_Pipe();
 	fhsWaterFlow_Speed();
 	fhsWaterFlow_Move();
-	fhsErosion();
-	fhsTransport();
 }
 
-void Terrain::fhsIterationRendu()
+void Terrain::fhsIterationErosion()
 {
-	fhsWaterFlow_Pipe();
-	fhsWaterFlow_Speed();
-	fhsWaterFlow_Move();
 	fhsErosion();
 	fhsTransport();
 }
@@ -1184,6 +1180,19 @@ void Terrain::setGrowLayer()
 
 			}
 		}
+
+	}
+
+	for(int j=1; j<_size-1; j++)
+	{
+		for(int i=1; i<_size-1; i++)
+		{
+			if(getRelativeHeightOnLayer(i, j, LAYERTYPE_WATER) >= 0.0101)
+			{
+				_growLayer[i + _size*j] = false;
+			}
+		}
+
 	}
 
 }

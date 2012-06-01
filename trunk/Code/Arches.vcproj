@@ -67,7 +67,7 @@
 				AdditionalDependencies="Core.lib Maya.lib glew32.lib opengl32.lib GlAux.lib glu32.lib QtCore4.lib QtOpenGL4.lib QtGui4.lib $(NOINHERIT)"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(MAYADIR)\Library&quot;;&quot;$(COREDIR)\Library&quot;;&quot;$(GLDIR)\Library&quot;"
+				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(MAYADIR)\Library&quot;;&quot;$(COREDIR)\Libs&quot;;&quot;$(GLDIR)\Library&quot;"
 				IgnoreDefaultLibraryNames="msvcrt.lib"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"

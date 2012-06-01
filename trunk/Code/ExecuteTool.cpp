@@ -242,40 +242,34 @@ void MainWindow::ExecuteToolTerWater()
 {
 	if(terrain != NULL)
 	{
-		const int nbIter = 10;
+		const int nbIter = 500;
 
-		int center = terrain->getSize()/2;
 		for(int i=0; i<nbIter; i++)
 		{
-			double wl = terrain->getRelativeHeightOnLayer(center,center,LAYERTYPE_WATER);
-			terrain->jetDEau(center-64,center);
-			
-			if(rendu)
-			{
-				terrain->fhsIteration();
-			}else{
-				terrain->fhsIteration();
-			}
+			//terrain->fhsRain(9e-5);
+			terrain->fhsRain(2e-4);
+			//terrain->fhsRain(0.009);
+			terrain->fhsIterationWater();
+			terrain->fhsIterationErosion();
+			terrain->fhsEvaporation(8e-5);
 
-			MayaGeometry mg_terrain = terrain->toMG();
-			MayaGeometry mg_water = terrain->waterToMG();
-			//mg_terrain.setMaterialObject(mo);
-			int size = terrain->getSize();
-			MayaGeometryAll mga = MayaGeometrySet(mg_terrain,MayaFrame::Id);
-			mga.Append(mg_water);
-			//mga.Translate(Vector(-size/2., -size/2., -128));
+			terrain->thermalErosion(0.001, 0.01);
 
-			if(i==nbIter-1)
+			if(i%50==0 || i == nbIter-1)
 			{
+				MayaGeometry mg_terrain = terrain->toMG();
+				MayaGeometryAll mga = MayaGeometrySet(mg_terrain,MayaFrame::Id);
 				mayaglWidget->clearWorld();
 				mayaglWidget->setWorld(mga);
 			}
 
 			std::cout << i << "/" << nbIter << std::endl;
 		}
-		rendu = true;
+
+		terrain->fhsEvaporation(0.1);
 		terrain->setGrowLayer();
 	}
+
 }
 
 
